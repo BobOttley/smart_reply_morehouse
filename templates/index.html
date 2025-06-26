@@ -289,7 +289,7 @@
     };
 
     function prepUI(msg) {
-      replyBox.innerHTML = `<em>${msg}</em>`;
+      replyBox.innerHTML = replyHTML.replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" ');
       replyBox.style.display = 'block';
       sentimentBox.style.display = 'none';
       errorBox.style.display = 'none';
