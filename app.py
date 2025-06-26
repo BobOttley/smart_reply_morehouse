@@ -253,7 +253,7 @@ Enquiry:
 \"\"\"{question}\"\"\"
 
 
-"""".strip()
+""".strip()
 
         sent_json = client.chat.completions.create(
             model="gpt-4o-mini",
