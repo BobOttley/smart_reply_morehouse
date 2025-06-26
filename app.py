@@ -300,6 +300,7 @@ Write a warm, professional email reply to the parent below, using only the appro
 
 Follow these essential rules:
 - Always use British spelling (e.g. organise, programme, enrolment)
+- The “Open Events page” must always link to: https://www.morehouse.org.uk/admissions/our-open-events/
 - Do NOT fabricate or guess any information. If something is unknown, say so honestly.
 - DO include relevant links using Markdown format: [Anchor Text](https://...). Embed links naturally in the body of the reply.
 - DO use approved anchor phrases like “Open Events page”, “Admissions page”, or “registration form”
