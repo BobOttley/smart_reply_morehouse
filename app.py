@@ -10,6 +10,8 @@ from flask_cors import CORS
 from openai import OpenAI
 from dotenv import load_dotenv
 from markdownify import markdownify as html_to_markdown
+from url_mapping import URL_MAPPING
+
 
 
 def parse_url_box(url_text):
@@ -134,6 +136,8 @@ def cosine_similarity(a, b):
     b = np.array(b)
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
+def get_safe_url(label):
+    return URL_MAPPING.get(label, "")
 
    
 
@@ -221,13 +225,17 @@ def generate_reply():
                 })
             # If matched is a dict with 'reply', 'url', and 'link_label'
             else:
+                safe_label = matched.get("link_label", "")
+                safe_url = get_safe_url(safe_label)
+
                 return jsonify({
                     "reply": matched.get("reply", ""),
                     "sentiment_score": 10,
                     "strategy_explanation": "Used approved template.",
-                    "url": matched.get("url", ""),
-                    "link_label": matched.get("link_label", "")
+                    "url": safe_url,
+                    "link_label": safe_label
                 })
+
 
 
         # 2) sentiment (mini model, cheap)
