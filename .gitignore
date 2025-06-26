@@ -1,0 +1,14 @@
+.DS_Store
+.env
+venv/
+__pycache__/
+*.pyc
+*.pkl
+*.jsonl
+*.log
+*.pdf
+*.docx
+scraped/
+embeddings/
+.vscode/
+.idea/
