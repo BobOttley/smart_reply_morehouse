@@ -162,22 +162,25 @@ except Exception as e:
 standard_messages, standard_embeddings, standard_replies = [], [], []
 
 def _load_standard_library():
-    path="standard_responses.json"
+    path = "standard_responses.json"  # or change to your chosen filename
     if not os.path.exists(path):
         print("⚠️ No standard_responses.json found.")
         return
     try:
-        with open(path,"r") as f:
-            saved=json.load(f)
+        with open(path, "r") as f:
+            saved = json.load(f)
         for entry in saved:
-            msg = remove_personal_info(entry["message"])
-            rep = entry["reply"]                   # reply already HTML-ised
-            standard_messages.append(msg)
-            standard_embeddings.append(embed_text(msg))
-            standard_replies.append(rep)
-        print(f"✅ Loaded {len(standard_messages)} template replies.")
+            reply = entry["reply"]
+            variants = entry.get("variants", [entry.get("message")])
+            for msg in variants:
+                redacted_msg = remove_personal_info(msg)
+                standard_messages.append(redacted_msg)
+                standard_embeddings.append(embed_text(redacted_msg))
+                standard_replies.append(reply)
+        print(f"✅ Loaded {len(standard_messages)} template reply variants.")
     except Exception as e:
         print(f"❌ Failed loading templates: {e}")
+
 
 _load_standard_library()
 
