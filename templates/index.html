@@ -301,6 +301,11 @@
 
     function renderReply(d) {
       replyBox.innerHTML = d.reply;
+      replyBox.querySelectorAll("a").forEach(link => {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+});
+
       replyBox.style.display = 'block';
       copyBtn.disabled = false;
       loadingSp.style.display = 'none';
