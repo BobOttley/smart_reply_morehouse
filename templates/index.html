@@ -74,15 +74,20 @@
       gap: 1rem;
       margin-top: .5rem;
     }
+    .reply-label {
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.6rem;
+      color: #003366;
+    }
     .reply-box, .sentiment-box, .error-box {
       display: none;
-      margin-top: 2rem;
       padding: 1.2rem;
       border-radius: 6px;
     }
     .reply-box {
-      background: #eef3f9;
-      border-left: 4px solid var(--brand-blue);
+      background: #ffffff;
+      border: 1px solid #ccc;
       line-height: 1.5;
     }
     .sentiment-box {
@@ -95,6 +100,7 @@
       border-left: 4px solid #d33c3c;
       color: #a00;
       font-weight: 600;
+      margin-top: 2rem;
     }
     .loader {
       display: inline-block;
@@ -148,14 +154,17 @@
 
     <div class="buttons-row">
       <button id="submitBtn">Generate Reply</button>
-      <button id="copyBtn" disabled>Copy Markdown</button>
-      <button id="copyOutlookBtn" disabled>Copy for Outlook</button>
       <button id="clearBtn">Clear Text</button>
       <span id="loading" class="loader" style="display:none;" aria-live="polite"></span>
     </div>
 
     <div id="sentimentBox" class="sentiment-box" aria-live="polite"></div>
+
+    <div id="replyLabel" class="reply-label" style="display:none;">
+      👇 Select and copy the reply below manually to paste into your email with full formatting and working hyperlinks.
+    </div>
     <div id="replyBox" class="reply-box" aria-live="polite"></div>
+
     <div id="errorBox" class="error-box" role="alert"></div>
 
     <div id="reviseSection" class="revise-section">
@@ -182,166 +191,152 @@
   </div>
 
   <script>
-    const $ = id => document.getElementById(id);
-    const submitBtn = $('submitBtn'), copyBtn = $('copyBtn'), copyOutlookBtn = $('copyOutlookBtn'), clearBtn = $('clearBtn'),
-          loadingSp = $('loading'), replyBox = $('replyBox'), sentimentBox = $('sentimentBox'),
-          errorBox = $('errorBox'), textarea = $('parentMessage'),
-          instructionEl = $('instructionBox'), urlEl = $('urlBox'),
-          reviseEl = $('reviseBox'), reviseBtn = $('reviseBtn'), saveBtn = $('saveBtn'),
-          reviseSection = $('reviseSection');
+  const $ = id => document.getElementById(id);
+  const submitBtn = $('submitBtn'), clearBtn = $('clearBtn'),
+        loadingSp = $('loading'), replyBox = $('replyBox'), sentimentBox = $('sentimentBox'),
+        errorBox = $('errorBox'), textarea = $('parentMessage'),
+        instructionEl = $('instructionBox'), urlEl = $('urlBox'),
+        reviseEl = $('reviseBox'), reviseBtn = $('reviseBtn'), saveBtn = $('saveBtn'),
+        reviseSection = $('reviseSection'), replyLabel = $('replyLabel');
 
-    let lastMessage = '', lastReply = '';
+  let lastMessage = '', lastReply = '';
+  textarea.focus();
+
+  // ENTER = submit parent message
+  textarea.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submitBtn.click();
+    }
+  });
+
+  // ENTER = revise response
+  reviseEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      reviseBtn.click();
+    }
+  });
+
+  submitBtn.onclick = async () => {
+    const message = textarea.value.trim();
+    const instruction = instructionEl.value.trim();
+    const url_box = urlEl?.value.trim() || "";
+    if (!message) { alert("Please paste an email before submitting."); return; }
+    prepUI();
+
+    try {
+      const r = await fetch("/reply", {
+        method: "POST", headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, instruction, url_box })
+      });
+      const data = await r.json();
+      if (r.ok && data.reply) {
+        lastMessage = message;
+        lastReply = data.reply;
+        renderReply(data);
+      } else {
+        throw new Error(data.error || "No reply generated.");
+      }
+    } catch (err) {
+      showError(err.message);
+    }
+  };
+
+  reviseBtn.onclick = async () => {
+    const instruction = reviseEl.value.trim();
+    const url_box = urlEl.value.trim();
+
+    if (!lastMessage || !lastReply) {
+      alert("Missing previous reply.");
+      return;
+    }
+
+    if (!instruction && !url_box) {
+      alert("Please enter a revision instruction or updated links.");
+      return;
+    }
+
+    prepUI();
+
+    try {
+      const r = await fetch("/revise", {
+        method: "POST", headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: lastMessage,
+          previous_reply: lastReply,
+          instruction,
+          url_box
+        })
+      });
+      const data = await r.json();
+      if (r.ok && data.reply) {
+        lastReply = data.reply;
+        renderReply(data);
+      } else {
+        throw new Error(data.error || "No revision generated.");
+      }
+    } catch (err) {
+      showError(err.message);
+    }
+  };
+
+  saveBtn.onclick = async () => {
+    if (!lastMessage || !lastReply) { alert("Nothing to save."); return; }
+    const urls = urlEl.value.split(';').map(x => x.trim()).filter(Boolean);
+    const res = await fetch("/save-standard", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: lastMessage, reply: lastReply, urls })
+    });
+    $('saveStatus').textContent = res.ok ? "Saved!" : "Error!";
+    setTimeout(() => { $('saveStatus').textContent = ''; }, 2000);
+  };
+
+  clearBtn.onclick = () => {
+    ['parentMessage','instructionBox','urlBox','reviseBox'].forEach(id => $(id).value = '');
+    lastMessage = lastReply = '';
+    ['replyBox', 'sentimentBox', 'errorBox'].forEach(id => { $(id).style.display = 'none'; $(id).innerHTML = ''; });
+    replyLabel.style.display = 'none';
+    reviseSection.style.display = 'none';
     textarea.focus();
+  };
 
-    submitBtn.onclick = async () => {
-      const message = textarea.value.trim();
-      const instruction = instructionEl.value.trim();
-      const url_box = urlEl?.value.trim() || "";
-      if (!message) { alert("Please paste an email before submitting."); return; }
-      prepUI("Generating new response…");
+  function prepUI() {
+    replyBox.innerHTML = "";
+    replyBox.style.display = 'block';
+    sentimentBox.style.display = 'none';
+    errorBox.style.display = 'none';
+    replyLabel.style.display = 'none';
+    submitBtn.disabled = true;
+    loadingSp.style.display = 'inline-block';
+  }
 
-      try {
-        const r = await fetch("/reply", {
-          method: "POST", headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ message, instruction, url_box })
-        });
-        const data = await r.json();
-        if (r.ok && data.reply) {
-          lastMessage = message;
-          lastReply = data.reply;
-          renderReply(data);
-        } else {
-          throw new Error(data.error || "No reply generated.");
-        }
-      } catch (err) {
-        showError(err.message);
-      }
-    };
-
-    textarea.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
-        e.preventDefault();
-        submitBtn.click();
-      }
+  function renderReply(d) {
+    replyBox.innerHTML = d.reply;
+    replyBox.querySelectorAll("a").forEach(link => {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
     });
 
-    reviseBtn.onclick = async () => {
-      const instruction = reviseEl.value.trim();
-      const url_box = urlEl.value.trim();
+    replyBox.style.display = 'block';
+    replyLabel.style.display = 'block';
+    loadingSp.style.display = 'none';
+    submitBtn.disabled = false;
+    reviseSection.style.display = 'block';
 
-      if (!lastMessage || !lastReply) {
-        alert("Missing previous reply.");
-        return;
-      }
-
-      if (!instruction && !url_box) {
-        alert("Please enter a revision instruction or updated links.");
-        return;
-      }
-
-      prepUI("Revising response…");
-
-      try {
-        const r = await fetch("/revise", {
-          method: "POST", headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            message: lastMessage,
-            previous_reply: lastReply,
-            instruction,
-            url_box
-          })
-        });
-        const data = await r.json();
-        if (r.ok && data.reply) {
-          lastReply = data.reply;
-          renderReply(data);
-        } else {
-          throw new Error(data.error || "No revision generated.");
-        }
-      } catch (err) {
-        showError(err.message);
-      }
-    };
-
-    saveBtn.onclick = async () => {
-      if (!lastMessage || !lastReply) { alert("Nothing to save."); return; }
-      const urls = urlEl.value.split(';').map(x => x.trim()).filter(Boolean);
-      const res = await fetch("/save-standard", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: lastMessage, reply: lastReply, urls })
-      });
-      $('saveStatus').textContent = res.ok ? "Saved!" : "Error!";
-      setTimeout(() => { $('saveStatus').textContent = ''; }, 2000);
-    };
-
-    clearBtn.onclick = () => {
-      ['parentMessage','instructionBox','urlBox','reviseBox'].forEach(id => $(id).value = '');
-      lastMessage = lastReply = '';
-      ['replyBox', 'sentimentBox', 'errorBox'].forEach(id => { $(id).style.display = 'none'; $(id).innerHTML = ''; });
-      reviseSection.style.display = 'none';
-      copyBtn.disabled = true;
-      copyOutlookBtn.disabled = true;
-      textarea.focus();
-    };
-
-    copyBtn.onclick = () => {
-      const md = replyBox.getAttribute("data-markdown");
-      if (md) {
-        navigator.clipboard.writeText(md).then(() => alert("📋 Copied Markdown version."));
-      } else {
-        alert("No Markdown version available.");
-      }
-    };
-
-    copyOutlookBtn.onclick = () => {
-      const html = replyBox.getAttribute("data-outlook");
-      if (html) {
-        navigator.clipboard.writeText(html).then(() => alert("📋 Copied Outlook-ready version."));
-      } else {
-        alert("No Outlook version available.");
-      }
-    };
-
-    function prepUI(msg) {
-      replyBox.innerHTML = lastReply.replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" ');
-      replyBox.style.display = 'block';
-      sentimentBox.style.display = 'none';
-      errorBox.style.display = 'none';
-      copyBtn.disabled = true;
-      copyOutlookBtn.disabled = true;
-      submitBtn.disabled = true;
-      loadingSp.style.display = 'inline-block';
+    if (d.sentiment_score !== undefined) {
+      sentimentBox.innerHTML = `<strong>Sentiment Score:</strong> ${d.sentiment_score}/10<br><strong>Strategy:</strong> ${d.strategy_explanation}`;
+      sentimentBox.style.display = 'block';
     }
+  }
 
-    function renderReply(d) {
-      replyBox.innerHTML = d.reply;
-      replyBox.setAttribute("data-markdown", d.reply_markdown || "");
-      replyBox.setAttribute("data-outlook", d.reply_outlook || "");
-      replyBox.querySelectorAll("a").forEach(link => {
-        link.setAttribute("target", "_blank");
-        link.setAttribute("rel", "noopener noreferrer");
-      });
-
-      replyBox.style.display = 'block';
-      copyBtn.disabled = false;
-      copyOutlookBtn.disabled = false;
-      loadingSp.style.display = 'none';
-      submitBtn.disabled = false;
-      reviseSection.style.display = 'block';
-
-      if (d.sentiment_score !== undefined) {
-        sentimentBox.innerHTML = `<strong>Sentiment Score:</strong> ${d.sentiment_score}/10<br><strong>Strategy:</strong> ${d.strategy_explanation}`;
-        sentimentBox.style.display = 'block';
-      }
-    }
-
-    function showError(message) {
-      loadingSp.style.display = 'none';
-      submitBtn.disabled = false;
-      errorBox.innerHTML = message;
-      errorBox.style.display = 'block';
-    }
+  function showError(message) {
+    loadingSp.style.display = 'none';
+    submitBtn.disabled = false;
+    errorBox.innerHTML = message;
+    errorBox.style.display = 'block';
+  }
   </script>
 </body>
 </html>
