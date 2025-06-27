@@ -70,6 +70,7 @@
     }
     .buttons-row {
       display: flex;
+      flex-wrap: wrap;
       gap: 1rem;
       margin-top: .5rem;
     }
@@ -147,7 +148,8 @@
 
     <div class="buttons-row">
       <button id="submitBtn">Generate Reply</button>
-      <button id="copyBtn" disabled>Copy Response</button>
+      <button id="copyBtn" disabled>Copy Markdown</button>
+      <button id="copyOutlookBtn" disabled>Copy for Outlook</button>
       <button id="clearBtn">Clear Text</button>
       <span id="loading" class="loader" style="display:none;" aria-live="polite"></span>
     </div>
@@ -161,15 +163,14 @@
       <textarea id="reviseBox" placeholder="E.g. Shorten, remove bursary link …"></textarea>
 
       <label for="urlBox" style="margin-top:1rem;display:block;">💡 Add Smart Links to Your Replies</label>
-<div class="field-desc" style="margin-bottom:.4rem;">
-  Automatically turn important phrases (like <em>Head</em> or <em>Visit Us</em>) into clickable links.<br><br>
-  <strong>How it works:</strong><br>
-  Just type each phrase and the webpage you want it to link to.<br>
-  Use this format:<br>
-  <code>Head=https://site.com/head; Visit Us=https://site.com/visit</code><br><br>
-  👉 Separate each pair with a semicolon (<code>;</code>)
-</div>
-
+      <div class="field-desc" style="margin-bottom:.4rem;">
+        Automatically turn important phrases (like <em>Head</em> or <em>Visit Us</em>) into clickable links.<br><br>
+        <strong>How it works:</strong><br>
+        Just type each phrase and the webpage you want it to link to.<br>
+        Use this format:<br>
+        <code>Head=https://site.com/head; Visit Us=https://site.com/visit</code><br><br>
+        👉 Separate each pair with a semicolon (<code>;</code>)
+      </div>
       <textarea id="urlBox" style="width:100%;padding:0.6rem;height:80px;margin-bottom:1rem;" placeholder="E.g. Head=https://..., Visit Us=https://..."></textarea>
 
       <div class="buttons-row">
@@ -182,7 +183,7 @@
 
   <script>
     const $ = id => document.getElementById(id);
-    const submitBtn = $('submitBtn'), copyBtn = $('copyBtn'), clearBtn = $('clearBtn'),
+    const submitBtn = $('submitBtn'), copyBtn = $('copyBtn'), copyOutlookBtn = $('copyOutlookBtn'), clearBtn = $('clearBtn'),
           loadingSp = $('loading'), replyBox = $('replyBox'), sentimentBox = $('sentimentBox'),
           errorBox = $('errorBox'), textarea = $('parentMessage'),
           instructionEl = $('instructionBox'), urlEl = $('urlBox'),
@@ -225,43 +226,42 @@
     });
 
     reviseBtn.onclick = async () => {
-  const instruction = reviseEl.value.trim();
-  const url_box = urlEl.value.trim();
+      const instruction = reviseEl.value.trim();
+      const url_box = urlEl.value.trim();
 
-  if (!lastMessage || !lastReply) {
-    alert("Missing previous reply.");
-    return;
-  }
+      if (!lastMessage || !lastReply) {
+        alert("Missing previous reply.");
+        return;
+      }
 
-  if (!instruction && !url_box) {
-    alert("Please enter a revision instruction or updated links.");
-    return;
-  }
+      if (!instruction && !url_box) {
+        alert("Please enter a revision instruction or updated links.");
+        return;
+      }
 
-  prepUI("Revising response…");
+      prepUI("Revising response…");
 
-  try {
-    const r = await fetch("/revise", {
-      method: "POST", headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message: lastMessage,
-        previous_reply: lastReply,
-        instruction,
-        url_box
-      })
-    });
-    const data = await r.json();
-    if (r.ok && data.reply) {
-      lastReply = data.reply;
-      renderReply(data);
-    } else {
-      throw new Error(data.error || "No revision generated.");
-    }
-  } catch (err) {
-    showError(err.message);
-  }
-};
-
+      try {
+        const r = await fetch("/revise", {
+          method: "POST", headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: lastMessage,
+            previous_reply: lastReply,
+            instruction,
+            url_box
+          })
+        });
+        const data = await r.json();
+        if (r.ok && data.reply) {
+          lastReply = data.reply;
+          renderReply(data);
+        } else {
+          throw new Error(data.error || "No revision generated.");
+        }
+      } catch (err) {
+        showError(err.message);
+      }
+    };
 
     saveBtn.onclick = async () => {
       if (!lastMessage || !lastReply) { alert("Nothing to save."); return; }
@@ -271,8 +271,8 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: lastMessage, reply: lastReply, urls })
       });
-      document.getElementById('saveStatus').textContent = res.ok ? "Saved!" : "Error!";
-      setTimeout(() => { document.getElementById('saveStatus').textContent = ''; }, 2000);
+      $('saveStatus').textContent = res.ok ? "Saved!" : "Error!";
+      setTimeout(() => { $('saveStatus').textContent = ''; }, 2000);
     };
 
     clearBtn.onclick = () => {
@@ -281,33 +281,51 @@
       ['replyBox', 'sentimentBox', 'errorBox'].forEach(id => { $(id).style.display = 'none'; $(id).innerHTML = ''; });
       reviseSection.style.display = 'none';
       copyBtn.disabled = true;
+      copyOutlookBtn.disabled = true;
       textarea.focus();
     };
 
     copyBtn.onclick = () => {
-      navigator.clipboard.writeText(lastReply).then(() => alert("Response copied."));
+      const md = replyBox.getAttribute("data-markdown");
+      if (md) {
+        navigator.clipboard.writeText(md).then(() => alert("📋 Copied Markdown version."));
+      } else {
+        alert("No Markdown version available.");
+      }
+    };
+
+    copyOutlookBtn.onclick = () => {
+      const html = replyBox.getAttribute("data-outlook");
+      if (html) {
+        navigator.clipboard.writeText(html).then(() => alert("📋 Copied Outlook-ready version."));
+      } else {
+        alert("No Outlook version available.");
+      }
     };
 
     function prepUI(msg) {
       replyBox.innerHTML = lastReply.replace(/<a /g, '<a target="_blank" rel="noopener noreferrer" ');
-
       replyBox.style.display = 'block';
       sentimentBox.style.display = 'none';
       errorBox.style.display = 'none';
       copyBtn.disabled = true;
+      copyOutlookBtn.disabled = true;
       submitBtn.disabled = true;
       loadingSp.style.display = 'inline-block';
     }
 
     function renderReply(d) {
       replyBox.innerHTML = d.reply;
+      replyBox.setAttribute("data-markdown", d.reply_markdown || "");
+      replyBox.setAttribute("data-outlook", d.reply_outlook || "");
       replyBox.querySelectorAll("a").forEach(link => {
-      link.setAttribute("target", "_blank");
-      link.setAttribute("rel", "noopener noreferrer");
-});
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "noopener noreferrer");
+      });
 
       replyBox.style.display = 'block';
       copyBtn.disabled = false;
+      copyOutlookBtn.disabled = false;
       loadingSp.style.display = 'none';
       submitBtn.disabled = false;
       reviseSection.style.display = 'block';

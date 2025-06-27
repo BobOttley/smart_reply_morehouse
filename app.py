@@ -105,49 +105,74 @@ def remove_personal_info(text: str) -> str:
 # ──────────────────────────────
 # 📦  HELPERS
 # ──────────────────────────────
+
 def embed_text(text: str) -> np.ndarray:
+    """
+    Embed a text string using the OpenAI embedding model and return a NumPy array.
+    """
     text = text.replace("\n", " ")
-    res  = client.embeddings.create(model=EMBED_MODEL, input=[text])
+    res = client.embeddings.create(model=EMBED_MODEL, input=[text])
     return np.array(res.data[0].embedding)
+
 
 def markdown_to_html(text: str) -> str:
     """
-    Convert Markdown links to HTML and preserve paragraph spacing.
-    Removes target attribute for Outlook compatibility.
+    Convert Markdown links to HTML and preserve paragraph structure.
+    Ensures hrefs are quoted and no target attributes.
+    Used for clean Smart Reply preview rendering.
     """
-    # Convert links (quoted, no target)
+    # Convert Markdown links [Anchor](URL) → <a href="URL">Anchor</a>
     text = re.sub(
         r'\[([^\]]+)\]\((https?://[^\)]+)\)',
         lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>',
         text
     )
-    # Convert paragraph spacing
+
+    # Split into paragraphs by double line breaks
     paragraphs = re.split(r'\n\s*\n', text.strip())
-    return ''.join(f'<p>{p.strip()}</p>\n' for p in paragraphs if p.strip())
+
+    # Wrap each paragraph in <p>...</p>
+    return '\n'.join(f'<p>{p.strip()}</p>' for p in paragraphs if p.strip())
+
+
+def markdown_to_outlook_html(md: str) -> str:
+    """
+    Convert Markdown to HTML with line breaks instead of paragraph tags.
+    Optimised for pasting into Outlook (uses <br><br> instead of <p>).
+    """
+    html = markdown(md)  # Use markdown lib to handle lists, etc.
+    html = html.replace("<p>", "").replace("</p>", "<br><br>")
+    html = re.sub(r'<strong>(.*?)</strong>', r'<b>\1</b>', html)  # Normalise bold
+    return html
 
 
 def clean_gpt_email_output(md: str) -> str:
-    """Clean up GPT output to remove markdown/code block labels and subject lines."""
+    """
+    Clean up GPT output by removing any unwanted Markdown wrappers or headings.
+    Ensures clean Markdown without code fences or Subject lines.
+    """
     md = md.strip()
-    # Remove any triple backticks (and possible markdown label)
     md = re.sub(r"^```(?:markdown)?", "", md, flags=re.I).strip()
     md = re.sub(r"```$", "", md, flags=re.I).strip()
-    # Remove 'markdown:' or 'Subject:' at the very start
     md = re.sub(r"^(markdown:|subject:)[\s]*", "", md, flags=re.I).strip()
-    # Remove accidental 'Subject:' anywhere at the very start of a line
     md = re.sub(r"^Subject:.*\n?", "", md, flags=re.I)
     return md.strip()
 
+
 def cosine_similarity(a, b):
-    """Return cosine similarity between two numpy arrays."""
+    """
+    Return cosine similarity between two NumPy vectors.
+    """
     a = np.array(a)
     b = np.array(b)
     return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
-def get_safe_url(label):
-    return URL_MAPPING.get(label, "")
 
-   
+def get_safe_url(label: str) -> str:
+    """
+    Fetch a safe URL from the URL_MAPPING dictionary based on the given label.
+    """
+    return URL_MAPPING.get(label, "")
 
 # ──────────────────────────────
 # 📚  LOAD SCHOOL KB
@@ -225,15 +250,28 @@ def generate_reply():
         # 1) pre-approved template?
         matched = check_standard_match(q_vec)
         if matched:
-            # If matched is a string, no URL is available
             if isinstance(matched, str):
-                return jsonify({
-                    "reply": matched,
-                    "sentiment_score": 10,
-                    "strategy_explanation": "Used approved template.",
-                    "url": "",
-                    "link_label": ""
-                })
+                reply_md = matched
+            else:
+                reply_md = matched.get("reply", "")
+
+            reply_html    = markdown_to_html(reply_md)
+            reply_outlook = markdown_to_outlook_html(reply_md)
+
+            safe_label = matched.get("link_label", "") if isinstance(matched, dict) else ""
+            safe_url   = get_safe_url(safe_label) if safe_label else ""
+
+            return jsonify({
+                "reply": reply_html,
+                "reply_markdown": reply_md,
+                "reply_outlook": reply_outlook,
+                "sentiment_score": 10,
+                "strategy_explanation": "Used approved template.",
+                "url": safe_url,
+                "link_label": safe_label
+            })
+
+
             # If matched is a dict with 'reply', 'url', and 'link_label'
             else:
                 safe_label = matched.get("link_label", "")
@@ -328,6 +366,7 @@ School Info:
 \"\"\"{top_context}\"\"\"
 
 Sign off:
+
 Mrs Powell De Caires  
 Director of Admissions and Marketing 
 More House School
