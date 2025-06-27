@@ -182,6 +182,11 @@
       </div>
       <textarea id="urlBox" style="width:100%;padding:0.6rem;height:80px;margin-bottom:1rem;" placeholder="E.g. Head=https://..., Visit Us=https://..."></textarea>
 
+      <label style="font-size: 0.9em; display: block; margin-bottom: 0.5rem;">
+        <input type="checkbox" id="ctaToggle" checked />
+        Include subtle call-to-action
+      </label>
+
       <div class="buttons-row">
         <button id="reviseBtn">Revise Response</button>
         <button id="saveBtn">Save as Standard</button>
@@ -226,10 +231,21 @@
     prepUI();
 
     try {
+      const include_cta = document.getElementById("ctaToggle")?.checked ?? true;
+
+      const payload = {
+        message,
+        instruction,
+        url_box,
+        include_cta
+      };
+
       const r = await fetch("/reply", {
-        method: "POST", headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message, instruction, url_box })
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
+
       const data = await r.json();
       if (r.ok && data.reply) {
         lastMessage = message;
