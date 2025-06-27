@@ -11,7 +11,6 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from markdownify import markdownify as html_to_markdown
 from url_mapping import URL_MAPPING
-from url_aliases import URL_ALIASES
 
 
 
@@ -204,7 +203,6 @@ def generate_reply():
         question_raw = (body.get("message") or "").strip()
         url_box_text = (body.get("url_box") or "").strip()
         url_map = parse_url_box(url_box_text)
-        url_map.update(URL_ALIASES)
         instruction_raw = (body.get("instruction") or "").strip()
 
         # 🔒 sanitise
@@ -337,7 +335,7 @@ More House School
 
         # Format the reply
         reply_md = insert_links(reply_md, url_map)
-        reply_html = markdown(reply_md)
+        reply_html = markdown_to_html(reply_md)
 
 
         # ✅ Extract URLs from HTML
@@ -384,8 +382,6 @@ def revise():
         message     = remove_personal_info(message_raw)
         instruction = remove_personal_info(instruction_raw)
         url_map     = parse_url_box(url_box_text)
-        url_map.update(URL_ALIASES)
-
 
         prompt = f"""
 Revise the admissions reply below according to the instruction.
