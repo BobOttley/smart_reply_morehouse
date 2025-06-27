@@ -111,12 +111,20 @@ def embed_text(text: str) -> np.ndarray:
     return np.array(res.data[0].embedding)
 
 def markdown_to_html(text: str) -> str:
-    """Convert markdown links to clickable HTML (keeps anchor text)."""
-    return re.sub(
+    """
+    Convert Markdown links to HTML and preserve paragraph spacing.
+    Removes target attribute for Outlook compatibility.
+    """
+    # Convert links (quoted, no target)
+    text = re.sub(
         r'\[([^\]]+)\]\((https?://[^\)]+)\)',
-        lambda m: f'<a href="{m.group(2)}" target="_blank">{m.group(1)}</a>',
+        lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>',
         text
-    ) 
+    )
+    # Convert paragraph spacing
+    paragraphs = re.split(r'\n\s*\n', text.strip())
+    return ''.join(f'<p>{p.strip()}</p>\n' for p in paragraphs if p.strip())
+
 
 def clean_gpt_email_output(md: str) -> str:
     """Clean up GPT output to remove markdown/code block labels and subject lines."""
