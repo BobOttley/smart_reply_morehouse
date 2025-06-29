@@ -210,6 +210,7 @@ def generate_reply():
     try:
         body = request.get_json(force=True)
         question_raw = (body.get("message") or "").strip()
+        source_type = body.get("source_type", "email")  # default to "email" if not provided
         include_cta = body.get("include_cta", True)
         url_box_text = (body.get("url_box") or "").strip()
         instruction_raw = (body.get("instruction") or "").strip()
@@ -282,13 +283,22 @@ Enquiry:
         elif "subjects" in q_lower or "curriculum" in q_lower:
             topic = "curriculum"
 
+        if source_type == "form":
+            message_intro = "Parent Enquiry Form Submission:"
+        else:
+            message_intro = "Parent Email:"
+
+
+
         # Email prompt
         prompt = f"""
 TODAY'S DATE IS {today_date}.
 
 You are Mrs Powell De Caires , Director of Admissions and Marketing at More House School, a UK all girls school from years 5 through to Sixth Form.
 
-Write a warm, professional email reply to the parent below, using only the approved school information provided.
+Mrs Powell De Caires is also the school Registrar. If you need to refernve the registrar, do not use a name but us the email address registrar@morehousemail.org.uk, so for example you can say somethink like ( you can contact the registrar by emailing registrar@morehousemail.org.uk ... )
+
+Write a warm, professional reply to the parent below. If the enquiry came from an online form rather than an email, still reply as if writing directly to the parent, but don’t reference the form itself. Use only the approved school information provided. When an enquiry form is recieved, the school always sends out a prospectus, so include the prospectus url hyperlinked in the email. If you do not have the prospectus url do not guess, leave a placeholder and the admissions team will insert. 
 
 Follow these essential rules:
 - Always use British spelling (e.g. organise, programme, enrolment)
@@ -306,7 +316,7 @@ Mrs Powell De Caires
 Director of Admissions and Marketing  
 More House School
 
-Parent Email:
+{message_intro}
 \"\"\"{question}\"\"\"
 
 School Info:
@@ -384,8 +394,14 @@ def revise_reply():
 TODAY'S DATE IS {today_date}.
 
 You are Mrs Powell De Caires, Director of Admissions and Marketing at More House School, a UK all girls school from years 5 through to Sixth Form.
+In the extreame rare time you need to refernce the registrar, never mention their name. 
 
 Please revise the email reply below based on the parent's original enquiry and the revision instruction provided.
+
+If the instruction asks for a call to action, you may add one of the following:
+- An invitation to visit the school
+- A prompt to request a personalised prospectus
+- An offer to discuss next steps
 
 Follow these essential rules:
 - Always use British spelling (e.g. organise, programme, enrolment)
@@ -424,29 +440,28 @@ More House School
             temperature=0.4
         ).choices[0].message.content.strip()
         
+
         # Clean and process the reply
         reply_md = clean_gpt_email_output(reply_md)
-        reply_md = insert_links(reply_md, url_map)
-        
-        # Convert to different formats
-        reply_html = markdown_to_html(reply_md)
-        reply_outlook = markdown_to_outlook_html(reply_md)  # Uses the improved function
-        
-        # Extract sentiment (reuse from original if no major changes)
+
+        # Default score and strategy in case sentiment fails
+        score, strat = 5, "Revised response"
+
+        # Try sentiment detection
         try:
             sent_prompt = f"""
-You are an expert school admissions assistant.
+        You are an expert school admissions assistant.
 
-Please analyse the following parent enquiry and return a JSON object with two keys:
+        Please analyse the following parent enquiry and return a JSON object with two keys:
 
-- "score": an integer from 1 (very negative) to 10 (very positive)
-- "strategy": a maximum 30 words strategy for how to reply to the message
+        - "score": an integer from 1 (very negative) to 10 (very positive)
+        - "strategy": a maximum 30 words strategy for how to reply to the message
 
-Only return the JSON object — no extra explanation.
+        Only return the JSON object — no extra explanation.
 
-Enquiry:
-\"\"\"{clean_message}\"\"\"
-""".strip()
+        Enquiry:
+        \"\"\"{clean_message}\"\"\"
+        """.strip()
 
             sent_json = client.chat.completions.create(
                 model="gpt-4o-mini",
@@ -456,9 +471,29 @@ Enquiry:
 
             sent = json.loads(sent_json)
             score = int(sent.get("score", 5))
-            strat = sent.get("strategy", "Revised response")
+            strat = sent.get("strategy", strat)
         except:
-            score, strat = 5, "Revised response"
+            pass  # fallback to default values
+
+        # Add subtle CTA (now safe to use score)
+        if "visit" in clean_message.lower():
+            reply_md += "\n\nIf you haven’t yet had a chance to visit us, we’d be delighted to welcome you to the school."
+        elif "fees" in clean_message.lower():
+            reply_md += "\n\nIf you’d like to discuss your child’s needs further, I’d be happy to arrange a time to speak."
+        elif "curriculum" in clean_message.lower():
+            reply_md += "\n\nWe’re always happy to share more about how we support girls to thrive academically and beyond."
+        elif score >= 8:
+            reply_md += "\n\nDo let me know if you’d like me to send a personalised prospectus tailored to your daughter’s interests."
+
+        reply_md = insert_links(reply_md, url_map)
+
+
+        
+        # Convert to different formats
+        reply_html = markdown_to_html(reply_md)
+        reply_outlook = markdown_to_outlook_html(reply_md)  # Uses the improved function
+        
+       
         
         # Extract links for response
         def extract_links_from_html(html):

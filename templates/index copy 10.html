@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SMART Reply | Smart Admissions Assistant</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-blue: #003366;
+      --brand-blue-hover: #002244;
+      --sentiment-green: #47B881;
+      --font-sans: "Aptos", "Inter", sans-serif;
+    }
+    body {
+      margin: 0;
+      background: #f9f9fb;
+      font-family: var(--font-sans);
+      color: #333;
+    }
+    .container {
+      max-width: 720px;
+      margin: 60px auto;
+      background: #fff;
+      padding: 2.5rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      margin: 0 0 .25rem 0;
+      color: var(--brand-blue);
+    }
+    p.subtext {
+      margin: 0 0 1.8rem 0;
+      color: #555;
+    }
+    textarea, button {
+      font-family: var(--font-sans);
+      font-size: 1rem;
+    }
+    textarea {
+      width: 100%;
+      padding: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      resize: vertical;
+      margin-bottom: 1rem;
+      box-sizing: border-box;
+    }
+    textarea#parentMessage { height: 140px }
+    textarea#instructionBox,
+    textarea#urlBox,
+    textarea#reviseBox { height: 80px }
+    button {
+      background: var(--brand-blue);
+      color: #fff;
+      border: none;
+      padding: .75rem 1.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background .3s;
+    }
+    .typeBtn {
+      background: #eee;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+
+    .typeBtn.active {
+      background: var(--brand-blue);
+      color: #fff;
+       border-color: var(--brand-blue);
+    }
+
+    button:hover:not(:disabled) {
+      background: var(--brand-blue-hover);
+    }
+    button:disabled {
+      background: #b8c6d6;
+      cursor: not-allowed;
+    }
+    .buttons-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: .5rem;
+    }
+    .reply-label {
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.6rem;
+      color: #003366;
+    }
+    .reply-box, .sentiment-box, .error-box {
+      display: none;
+      padding: 1.2rem;
+      border-radius: 6px;
+    }
+    .reply-box {
+      background: #ffffff;
+      border: 1px solid #ccc;
+      line-height: 1.5;
+    }
+    .sentiment-box {
+      background: #f4fdf2;
+      border-left: 4px solid var(--sentiment-green);
+      color: #2d6240;
+    }
+    .error-box {
+      background: #ffe9e9;
+      border-left: 4px solid #d33c3c;
+      color: #a00;
+      font-weight: 600;
+      margin-top: 2rem;
+    }
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      margin-left: 10px;
+      border: 2px solid #fff;
+      border-top: 2px solid var(--brand-blue);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      vertical-align: middle;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .revise-section {
+      display: none;
+      margin-top: 2rem;
+    }
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: .3rem;
+    }
+    .field-desc {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: .6rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+      <h1>SMART Reply</h1>
+      <div style="font-size: 0.9rem; color: #555;">
+        Powered by
+        <img src="https://more-house-school.s3.eu-west-2.amazonaws.com/CT__300dpi_primary_full.jpg"
+             alt="Cognitive Tasking" height="28"
+             style="vertical-align: middle; margin-left: 4px; opacity: 0.85;">
+      </div>
+    </div>
+    <p class="subtext">Paste a parent email or enquiry form below — SMART Reply will write a professional reply using More House School’s official information.</p>
+
+    <label>Message Type:</label>
+    <div id="messageTypeGroup" style="margin-bottom: 12px;">
+      <button type="button" class="typeBtn active" data-type="email">Email</button>
+      <button type="button" class="typeBtn" data-type="form">Enquiry Form</button>
+    </div>
+    <input type="hidden" id="sourceType" value="email">
+
+
+    <label for="parentMessage">Parent Email:</label>
+    <textarea id="parentMessage" placeholder="E.g. Do you offer wrap-around care or bursaries for siblings?"></textarea>
+
+    <label for="instructionBox">Optional Instruction:</label>
+    <div class="field-desc">Add any special tone or style instructions (e.g. "Make it warmer", "Be concise").</div>
+    <textarea id="instructionBox"></textarea>
+
+    <div class="buttons-row">
+      <button id="submitBtn">Generate Reply</button>
+      <button id="clearBtn">Clear Text</button>
+      <span id="loading" class="loader" style="display:none;" aria-live="polite"></span>
+    </div>
+
+    <div id="sentimentBox" class="sentiment-box" aria-live="polite"></div>
+
+    <div id="replyLabel" class="reply-label" style="display:none;">
+      👇 Select and copy the reply below manually to paste into your email with full formatting and working hyperlinks.
+    </div>
+    <div id="replyBox" class="reply-box" aria-live="polite"></div>
+
+    <div id="errorBox" class="error-box" role="alert"></div>
+
+    <div id="reviseSection" class="revise-section">
+      <label for="reviseBox">Refine this reply with an instruction:</label>
+      <textarea id="reviseBox" placeholder="E.g. Shorten, remove bursary link …"></textarea>
+
+      <label for="urlBox" style="margin-top:1rem;display:block;">💡 Add Smart Links to Your Replies</label>
+      <div class="field-desc" style="margin-bottom:.4rem;">
+        Automatically turn important phrases (like <em>Head</em> or <em>Visit Us</em>) into clickable links.<br><br>
+        <strong>How it works:</strong><br>
+        Just type each phrase and the webpage you want it to link to.<br>
+        Use this format:<br>
+        <code>Head=https://site.com/head; Visit Us=https://site.com/visit</code><br><br>
+        👉 Separate each pair with a semicolon (<code>;</code>)
+      </div>
+      <textarea id="urlBox" style="width:100%;padding:0.6rem;height:80px;margin-bottom:1rem;" placeholder="E.g. Head=https://..., Visit Us=https://..."></textarea>
+
+      <label style="font-size: 0.9em; display: block; margin-bottom: 0.5rem;">
+        <input type="checkbox" id="ctaToggle" checked />
+        Include subtle call-to-action
+      </label>
+
+      <div class="buttons-row">
+        <button id="reviseBtn">Revise Response</button>
+        <button id="saveBtn">Save as Standard</button>
+        <span id="saveStatus" style="color: #47B881; font-weight: 600;"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  const $ = id => document.getElementById(id);
+  const submitBtn = $('submitBtn'), clearBtn = $('clearBtn'),
+        loadingSp = $('loading'), replyBox = $('replyBox'), sentimentBox = $('sentimentBox'),
+        errorBox = $('errorBox'), textarea = $('parentMessage'),
+        instructionEl = $('instructionBox'), urlEl = $('urlBox'),
+        reviseEl = $('reviseBox'), reviseBtn = $('reviseBtn'), saveBtn = $('saveBtn'),
+        reviseSection = $('reviseSection'), replyLabel = $('replyLabel');
+
+  let lastMessage = '', lastReply = '';
+  textarea.focus();
+
+  // Toggle between Email and Form
+  document.querySelectorAll(".typeBtn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".typeBtn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      document.getElementById("sourceType").value = btn.dataset.type;
+    });
+  });
+
+
+  // ENTER = submit parent message
+  textarea.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submitBtn.click();
+    }
+  });
+
+  // ENTER = revise response
+  reviseEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      reviseBtn.click();
+    }
+  });
+
+  submitBtn.onclick = async () => {
+    const message = textarea.value.trim();
+    const instruction = instructionEl.value.trim();
+    const url_box = urlEl?.value.trim() || "";
+    if (!message) { alert("Please paste an email before submitting."); return; }
+    prepUI();
+
+    try {
+      const include_cta = document.getElementById("ctaToggle")?.checked ?? true;
+
+      const source_type = document.getElementById("sourceType").value;
+
+      const payload = {
+        message,
+        instruction,
+        url_box,
+        include_cta,
+        source_type
+      };
+
+
+      const r = await fetch("/reply", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await r.json();
+      if (r.ok && data.reply) {
+        lastMessage = message;
+        lastReply = data.reply;
+        renderReply(data);
+      } else {
+        throw new Error(data.error || "No reply generated.");
+      }
+    } catch (err) {
+      showError(err.message);
+    }
+  };
+
+  reviseBtn.onclick = async () => {
+    const instruction = reviseEl.value.trim();
+    const url_box = urlEl.value.trim();
+
+    if (!lastMessage || !lastReply) {
+      alert("Missing previous reply.");
+      return;
+    }
+
+    if (!instruction && !url_box) {
+      alert("Please enter a revision instruction or updated links.");
+      return;
+    }
+
+    prepUI();
+
+    try {
+      const r = await fetch("/revise", {
+        method: "POST", headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: lastMessage,
+          previous_reply: lastReply,
+          instruction,
+          url_box
+        })
+      });
+      const data = await r.json();
+      if (r.ok && data.reply) {
+        lastReply = data.reply;
+        renderReply(data);
+      } else {
+        throw new Error(data.error || "No revision generated.");
+      }
+    } catch (err) {
+      showError(err.message);
+    }
+  };
+
+  saveBtn.onclick = async () => {
+    if (!lastMessage || !lastReply) { alert("Nothing to save."); return; }
+    const urls = urlEl.value.split(';').map(x => x.trim()).filter(Boolean);
+    const res = await fetch("/save-standard", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: lastMessage, reply: lastReply, urls })
+    });
+    $('saveStatus').textContent = res.ok ? "Saved!" : "Error!";
+    setTimeout(() => { $('saveStatus').textContent = ''; }, 2000);
+  };
+
+  clearBtn.onclick = () => {
+    ['parentMessage','instructionBox','urlBox','reviseBox'].forEach(id => $(id).value = '');
+    lastMessage = lastReply = '';
+    ['replyBox', 'sentimentBox', 'errorBox'].forEach(id => { $(id).style.display = 'none'; $(id).innerHTML = ''; });
+    replyLabel.style.display = 'none';
+    reviseSection.style.display = 'none';
+    textarea.focus();
+  };
+
+  function prepUI() {
+    replyBox.innerHTML = "";
+    replyBox.style.display = 'block';
+    sentimentBox.style.display = 'none';
+    errorBox.style.display = 'none';
+    replyLabel.style.display = 'none';
+    submitBtn.disabled = true;
+    loadingSp.style.display = 'inline-block';
+  }
+
+  function renderReply(d) {
+    replyBox.innerHTML = d.reply;
+    replyBox.querySelectorAll("a").forEach(link => {
+      link.setAttribute("target", "_blank");
+      link.setAttribute("rel", "noopener noreferrer");
+    });
+
+    replyBox.style.display = 'block';
+    replyLabel.style.display = 'block';
+    loadingSp.style.display = 'none';
+    submitBtn.disabled = false;
+    reviseSection.style.display = 'block';
+
+    if (d.sentiment_score !== undefined) {
+      sentimentBox.innerHTML = `<strong>Sentiment Score:</strong> ${d.sentiment_score}/10<br><strong>Strategy:</strong> ${d.strategy_explanation}`;
+      sentimentBox.style.display = 'block';
+    }
+  }
+
+  function showError(message) {
+    loadingSp.style.display = 'none';
+    submitBtn.disabled = false;
+    errorBox.innerHTML = message;
+    errorBox.style.display = 'block';
+  }
+  </script>
+</body>
+</html>

@@ -121,33 +121,11 @@ def markdown_to_outlook_html(md: str) -> str:
 
 def clean_gpt_email_output(md: str) -> str:
     md = md.strip()
-
-    # Remove any markdown fences
     md = re.sub(r"^```(?:markdown)?", "", md, flags=re.I).strip()
     md = re.sub(r"```$", "", md, flags=re.I).strip()
-
-    # Remove known heading formats (Subject or fake header lines)
-    lines = md.splitlines()
-
-    if lines:
-        first_line = lines[0].strip()
-        if (
-            len(first_line) < 80 and  # short, heading-like
-            not first_line.lower().startswith("dear") and
-            not first_line.endswith(".") and
-            not first_line.endswith(":")
-        ):
-            # Remove the first line if it looks like a heading
-            lines = lines[1:]
-
-    # Rejoin and clean markdown formatting
-    md = "\n".join(lines).strip()
-    md = re.sub(r"\*\*(.*?)\*\*", r"\1", md)  # remove bold
-    md = re.sub(r"\*(.*?)\*", r"\1", md)      # remove italic
-
+    md = re.sub(r"^(markdown:|subject:)[\s]*", "", md, flags=re.I).strip()
+    md = re.sub(r"^Subject:.*\n?", "", md, flags=re.I)
     return md.strip()
-
-
 
 def cosine_similarity(a, b): return np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
 
@@ -210,7 +188,6 @@ def generate_reply():
     try:
         body = request.get_json(force=True)
         question_raw = (body.get("message") or "").strip()
-        include_cta = body.get("include_cta", True)
         url_box_text = (body.get("url_box") or "").strip()
         instruction_raw = (body.get("instruction") or "").strip()
         question = remove_personal_info(question_raw)
@@ -222,6 +199,8 @@ def generate_reply():
         matched = check_standard_match(q_vec)
         if matched:
             reply_md = matched
+            safe_label = ""
+            safe_url = ""
             reply_html = markdown_to_html(reply_md)
             reply_outlook = markdown_to_outlook_html(reply_md)
             return jsonify({
@@ -230,10 +209,10 @@ def generate_reply():
                 "reply_outlook": reply_outlook,
                 "sentiment_score": 10,
                 "strategy_explanation": "Used approved template.",
-                "url": "", "link_label": ""
+                "url": safe_url,
+                "link_label": safe_label
             })
 
-        # Sentiment detection
         sent_prompt = f"""
 You are an expert school admissions assistant.
 
@@ -246,43 +225,32 @@ Only return the JSON object — no extra explanation.
 
 Enquiry:
 \"\"\"{question}\"\"\"
-"""
+""".strip()
+
         sent_json = client.chat.completions.create(
             model="gpt-4o-mini",
-            messages=[{"role": "user", "content": sent_prompt}],
+            messages=[{"role":"user","content":sent_prompt}],
             temperature=0.3
         ).choices[0].message.content.strip()
+
         try:
             sent = json.loads(sent_json)
-            score = int(sent.get("score", 5))
-            strat = sent.get("strategy", "")
-        except:
-            score, strat = 5, ""
+            score = int(sent.get("score",5))
+            strat = sent.get("strategy","")
+        except: score, strat = 5, ""
 
-        # Search top context
         sims = [(cosine_similarity(q_vec, vec), meta) for vec, meta in zip(doc_embeddings, metadata)]
-        top = sorted([m for m in sims if m[0] >= SIMILARITY_THRESHOLD], key=lambda x: x[0], reverse=True)[:RESPONSE_LIMIT]
+        top = sorted([m for m in sims if m[0] >= SIMILARITY_THRESHOLD], key=lambda x:x[0], reverse=True)[:RESPONSE_LIMIT]
         if not top:
             return jsonify({
-                "reply": "<p>Thank you for your enquiry. A member of our admissions team will contact you shortly.</p>",
-                "sentiment_score": score, "strategy_explanation": strat
+                "reply":"<p>Thank you for your enquiry. A member of our admissions team will contact you shortly.</p>",
+                "sentiment_score":score,"strategy_explanation":strat
             })
 
         context_blocks = [f"{m['content']}\n[Info source]({m.get('url','')})" if m.get('url') else m['content'] for _, m in top]
         top_context = "\n---\n".join(context_blocks)
         today_date = datetime.now().strftime('%d %B %Y')
 
-        # Topic detection for CTA
-        topic = "general"
-        q_lower = question.lower()
-        if "visit" in q_lower or "tour" in q_lower:
-            topic = "visit"
-        elif "fees" in q_lower or "cost" in q_lower:
-            topic = "fees"
-        elif "subjects" in q_lower or "curriculum" in q_lower:
-            topic = "curriculum"
-
-        # Email prompt
         prompt = f"""
 TODAY'S DATE IS {today_date}.
 
@@ -300,36 +268,27 @@ Follow these essential rules:
 - NEVER show raw URLs, list links at the bottom, or use markdown formatting like bold, italics, or bullet points
 - NEVER include expired dates. If unsure, direct the parent to the relevant web page instead
 
-End your reply with this exact sign-off, using line breaks:
-
-Mrs Powell De Caires  
-Director of Admissions and Marketing  
-More House School
+Reply only with the full email body in Markdown format, ready to send. Do not include 'Subject:', triple backticks, or code blocks.
 
 Parent Email:
 \"\"\"{question}\"\"\"
 
 School Info:
 \"\"\"{top_context}\"\"\"
-"""
+
+End your reply with this exact sign-off, using line breaks:
+
+Mrs Powell De Caires  
+Director of Admissions and Marketing  
+More House School
+""".strip()
+
         reply_md = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[{"role":"user","content":prompt}],
             temperature=0.4
         ).choices[0].message.content.strip()
         reply_md = clean_gpt_email_output(reply_md)
-
-        # Add subtle CTA if toggle is on
-        if include_cta:
-            if topic == "visit":
-                reply_md += "\n\nIf you haven’t yet had a chance to visit us, we’d be delighted to welcome you to the school."
-            elif topic == "fees":
-                reply_md += "\n\nIf you’d like to discuss your child’s needs further, I’d be happy to arrange a time to speak."
-            elif topic == "curriculum":
-                reply_md += "\n\nWe’re always happy to share more about how we support girls to thrive academically and beyond."
-            elif score >= 8:
-                reply_md += "\n\nDo let me know if you’d like me to send a personalised prospectus tailored to your daughter’s interests."
-
         reply_md = insert_links(reply_md, url_map)
         reply_html = markdown_to_html(reply_md)
         reply_outlook = markdown_to_outlook_html(reply_md)
@@ -350,10 +309,9 @@ School Info:
             "url": matched_url,
             "link_label": matched_source
         })
-
     except Exception as e:
         print(f"❌ REPLY ERROR: {e}")
-        return jsonify({"error": "Internal server error."}), 500
+        return jsonify({"error":"Internal server error."}), 500
 
 @app.route("/revise", methods=["POST"])
 def revise_reply():
@@ -397,9 +355,6 @@ Follow these essential rules:
 - NEVER include expired dates. If unsure, direct the parent to the relevant web page instead
 
 Reply only with the revised email body in Markdown format, ready to send. Do not include 'Subject:', triple backticks, or code blocks.
-
-- NEVER use markdown formatting like bold, italics, or bullet points
-
 
 Original Parent Email:
 \"\"\"{clean_message}\"\"\"
@@ -482,41 +437,6 @@ Enquiry:
     except Exception as e:
         print(f"❌ REVISE ERROR: {e}")
         return jsonify({"error": "Internal server error during revision."}), 500
-
-@app.route("/save-standard", methods=["POST"])
-def save_standard_reply():
-    try:
-        body = request.get_json(force=True)
-        message = (body.get("message") or "").strip()
-        reply = (body.get("reply") or "").strip()
-        urls = body.get("urls", [])
-
-        if not message or not reply:
-            return jsonify({"error": "Missing message or reply."}), 400
-
-        # Load existing saved responses
-        path = "standard_responses.json"
-        saved = []
-        if os.path.exists(path):
-            with open(path, "r") as f:
-                saved = json.load(f)
-
-        # Add new entry
-        entry = {
-            "message": message,
-            "reply": reply,
-            "urls": urls
-        }
-        saved.append(entry)
-
-        with open(path, "w") as f:
-            json.dump(saved, f, indent=2)
-
-        return jsonify({"status": "saved"})
-    except Exception as e:
-        print(f"❌ SAVE ERROR: {e}")
-        return jsonify({"error": "Internal server error during save."}), 500
-
 
 @app.route("/")
 def index(): return render_template("index.html")
