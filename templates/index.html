@@ -194,7 +194,17 @@
       </div>
     </div>
   </div>
-
+  <!-- PDF Upload Section -->
+  <div class="container">
+    <hr style="margin: 2rem 0;">
+    <h3>Upload PDFs to Expand Knowledge Base</h3>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <input type="file" name="pdfs" id="pdfs" accept="application/pdf" multiple required style="display:none;">
+      <label for="pdfs" style="padding: 0.6rem 1.2rem; background: var(--brand-blue); color: #fff; border-radius: 5px; cursor: pointer; display: inline-block;">Choose PDF(s)</label>
+      <button type="submit" style="margin-left: 10px;">Upload PDFs</button>
+      <div id="uploadStatus" style="margin-top: 1rem; font-size: 0.95rem; color: #333;"></div>
+    </form>
+  </div>
   <script>
   const $ = id => document.getElementById(id);
   const submitBtn = $('submitBtn'), clearBtn = $('clearBtn'),
@@ -353,6 +363,25 @@
     errorBox.innerHTML = message;
     errorBox.style.display = 'block';
   }
+  document.getElementById("uploadForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      const files = document.getElementById("pdfs").files;
+      if (!files.length) return alert("Please select at least one PDF.");
+
+      const formData = new FormData();
+      for (let f of files) formData.append("pdfs", f);
+
+      const status = document.getElementById("uploadStatus");
+      status.textContent = "Uploading...";
+
+      const res = await fetch("/upload-pdfs", {
+        method: "POST",
+        body: formData
+      });
+
+      const msg = await res.text();
+      status.innerHTML = `✅ <strong>Upload complete:</strong><br><code>${msg}</code>`;
+    });
   </script>
 </body>
 </html>

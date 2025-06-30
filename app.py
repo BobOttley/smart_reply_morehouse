@@ -10,6 +10,9 @@ from flask_cors import CORS
 from openai import OpenAI
 from dotenv import load_dotenv
 from url_mapping import URL_MAPPING
+from flask import request
+from werkzeug.utils import secure_filename
+from embedding_utils import process_pdf_and_append_to_kb
 
 # ───────────── HELPERS ─────────────
 
@@ -516,6 +519,36 @@ def save_standard_reply():
     except Exception as e:
         print(f"❌ SAVE ERROR: {e}")
         return jsonify({"error": "Internal server error during save."}), 500
+# ─────────── PDF UPLOAD ENDPOINT ───────────
+import os
+from flask import request
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = "uploaded_pdfs"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+@app.route("/upload-pdfs", methods=["POST"])
+def upload_pdfs():
+    files = request.files.getlist("pdfs")
+    saved = []
+
+    for file in files:
+        fname = secure_filename(file.filename)
+        if not fname.lower().endswith(".pdf"):
+            continue
+
+        path = os.path.join(UPLOAD_FOLDER, fname)
+        file.save(path)
+
+        # 🔥 Automatically embed the PDF
+        chunks = process_pdf_and_append_to_kb(path)
+        saved.append(f"{fname} ({chunks} chunks)")
+
+    if saved:
+        return f"✅ Uploaded and embedded: {', '.join(saved)}"
+    return "❌ No valid PDFs uploaded."
+
+# ─────────── END PDF UPLOAD ENDPOINT ────────
 
 
 @app.route("/")
