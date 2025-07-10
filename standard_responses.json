@@ -1,162 +1,191 @@
 [
   {
-    "message": "when is your next open event",
-    "variants": [
-      "When is your next open event?",
-      "Do you have an upcoming open day?",
-      "Are there any upcoming school visits?",
-      "Can I book an open event?",
-      "When can we tour the school?",
-      "When is the next open morning?",
-      "Are there events for prospective families?",
-      "Is there an open day this term?",
-      "Do you offer taster events?",
-      "How do I attend an open day?"
+    "question": [
+      "What A Level subjects do you offer?",
+      "Which subjects can my daughter take in Sixth Form?",
+      "A Level options at More House"
     ],
-    "reply": "<p>Thank you for your interest in More House School. You can view our upcoming open events on the [Our Open Events](https://www.morehouse.org.uk/admissions/our-open-events/) page. These events are a great opportunity to meet our staff, tour the school, and learn more about our values and curriculum.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "We offer a wide selection of A Level subjects at More House, designed to support each student’s strengths and aspirations. You can view the full list of available subjects on our [Academic Life page](https://www.morehouse.org.uk/academic-life/). If you’d like to see our learning environment first-hand, our upcoming [Open Events page](https://www.morehouse.org.uk/admissions/our-open-events/) has the latest details.",
+    "tags": ["sixth form", "subjects", "a levels"]
   },
   {
-    "message": "how do i apply",
-    "variants": [
-      "How do I apply?",
+    "question": [
+      "How do I apply for a place at More House?",
       "What is the admissions process?",
-      "How can I register my child?",
-      "Where do I apply for a place?",
-      "What steps do I take to apply?",
-      "Can I start the application online?",
-      "Where is your application form?",
-      "How do I enrol my daughter?",
-      "What\u2019s the joining process?",
-      "Where can I find admissions information?"
+      "How can I register my daughter?"
     ],
-    "reply": "<p>We are delighted that you are considering More House School. To apply, please visit our [Joining More House](https://www.morehouse.org.uk/admissions/joining-more-house/) page. You\u2019ll find all the necessary steps and documents, including our admissions timeline and application form.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "To apply for a place at More House, please visit our [Admissions page](https://www.morehouse.org.uk/admissions/), where you’ll find full details of our process. You can complete our online [registration form](https://www.morehouse.org.uk/admissions/register-your-daughter/) at any time. If you have any questions, I am always happy to help.",
+    "tags": ["admissions", "registration", "application"]
   },
   {
-    "message": "what are your school fees",
-    "variants": [
-      "What are your school fees?",
-      "How much does it cost to attend?",
-      "Where can I find fee information?",
-      "Can I see your fee structure?",
-      "Do you offer bursaries?",
-      "Are there payment plans?",
-      "Is financial aid available?",
-      "How much are tuition fees?",
-      "Do fees include lunches and trips?",
-      "Where is the fees page?"
+    "question": [
+      "When are your open events?",
+      "How can I visit the school?",
+      "Do you offer tours or open mornings?"
     ],
-    "reply": "<p>Our current fee structure is available on the [Fees](https://www.morehouse.org.uk/admissions/fees/) page. If you would like to discuss payment options or bursary support, please don\u2019t hesitate to contact us.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "We warmly invite families to visit us at one of our open events or to arrange a personal tour. Please see our [Open Events page](https://www.morehouse.org.uk/admissions/our-open-events/) for the latest dates and booking information. If you’d prefer a private visit, just let me know and I will be glad to arrange it.",
+    "tags": ["open events", "visit", "tours"]
   },
   {
-    "message": "do you offer scholarships or bursaries",
-    "variants": [
+    "question": [
+      "What are your fees?",
+      "How much does it cost to attend More House?",
+      "Can you provide information about school fees?"
+    ],
+    "answer": "Our current fees and full details of what is included can be found on our [Fees page](https://www.morehouse.org.uk/admissions/fees-and-bursaries/). If you have any specific questions or wish to discuss fee assistance, please feel free to contact me directly.",
+    "tags": ["fees", "bursaries", "admissions"]
+  },
+  {
+    "question": [
       "Do you offer scholarships or bursaries?",
       "What financial support is available?",
-      "Can my child apply for a scholarship?",
-      "How do bursaries work?",
-      "Where do I find scholarship info?",
-      "Who is eligible for a bursary?",
-      "Are scholarships offered each year?",
-      "Can international students get bursaries?",
-      "Do you have music scholarships?",
-      "Where is your scholarships page?"
+      "Is there assistance with fees?"
     ],
-    "reply": "<p>Yes, More House School offers both scholarships and bursaries. You can find details about eligibility and how to apply on our [Scholarships and Bursaries](https://www.morehouse.org.uk/admissions/scholarships-and-bursaries/) page.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "Yes, we offer a number of scholarships and bursaries to support families. Full details, including eligibility and application information, can be found on our [Fees and Bursaries page](https://www.morehouse.org.uk/admissions/fees-and-bursaries/). For advice or guidance, I am happy to help.",
+    "tags": ["scholarships", "bursaries", "fees"]
   },
   {
-    "message": "what is the school uniform",
-    "variants": [
-      "What is the school uniform?",
-      "Where do I find uniform guidelines?",
-      "Do you have a uniform shop?",
-      "Can I buy uniform online?",
-      "Where do I get the school uniform?",
-      "Is uniform compulsory?",
-      "Do you have a second-hand uniform sale?",
-      "Are there different uniforms by year?",
-      "What should students wear?",
-      "Where is the uniform information?"
+    "question": [
+      "How do you support new pupils?",
+      "What transition support is in place?",
+      "Will my daughter settle in easily?"
     ],
-    "reply": "<p>Information about our school uniform and guidelines is available on the [School Uniform](https://www.morehouse.org.uk/information/school-uniform/) page. If you have further questions, our Admissions Team is happy to help.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "We take great care to help every new pupil feel welcomed and supported. Our pastoral team, form tutors, and dedicated transition programme ensure that each girl is introduced to school life at her own pace. You can learn more about our approach on the [Pastoral Care page](https://www.morehouse.org.uk/pastoral-care/).",
+    "tags": ["transition", "pastoral care", "wellbeing"]
   },
   {
-    "message": "when are your term dates",
-    "variants": [
-      "When are your term dates?",
-      "Where can I find the academic calendar?",
-      "When does school start each term?",
-      "Do you publish holiday dates?",
-      "Where are your school dates listed?",
-      "What are the key term dates?",
-      "How long are school holidays?",
-      "Do you publish inset days?",
-      "Where is the term calendar?",
-      "Is the term schedule available online?"
+    "question": [
+      "What co-curricular activities do you offer?",
+      "Are there clubs and societies?",
+      "What can my daughter do outside lessons?"
     ],
-    "reply": "<p>Our academic calendar and term dates are published on the [Term Dates](https://www.morehouse.org.uk/news-and-calendar/term-dates/) page. Please refer to this page for details of each school term.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "More House offers a vibrant range of co-curricular clubs and activities, from creative arts and sport to STEM, debating, and music. This helps every girl to discover new interests and develop confidence beyond the classroom. Explore our [Co-Curricular page](https://www.morehouse.org.uk/co-curricular/) for more details.",
+    "tags": ["co-curricular", "clubs", "enrichment"]
   },
   {
-    "message": "what subjects do you offer",
-    "variants": [
-      "What subjects do you offer?",
-      "What is on the curriculum?",
-      "Which subjects are taught?",
-      "Do you offer languages and sciences?",
-      "Where can I see subject options?",
-      "Is Latin offered?",
-      "What creative subjects are available?",
-      "Do you offer A Levels?",
-      "What does the curriculum include?",
-      "Where is the subjects page?"
+    "question": [
+      "What support do you provide for university applications?",
+      "How do you help Sixth Formers with next steps?",
+      "Do you offer careers advice?"
     ],
-    "reply": "<p>You can explore the full list of subjects taught at More House School on our [Subjects](https://www.morehouse.org.uk/learning/subjects/) page. This includes core academic disciplines as well as creative and specialist subjects.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "We offer personalised careers advice and comprehensive support for university applications, including one-to-one guidance, interview preparation, and UCAS workshops. Read more about our approach on the [Sixth Form page](https://www.morehouse.org.uk/sixth-form/) and [Academic Life page](https://www.morehouse.org.uk/academic-life/).",
+    "tags": ["sixth form", "university", "careers"]
   },
   {
-    "message": "what co-curricular activities are available",
-    "variants": [
-      "What co-curricular activities are available?",
-      "What clubs do you offer?",
-      "Are there after-school activities?",
-      "What enrichment opportunities exist?",
-      "Do students take part in drama or music?",
-      "Is sport part of the co-curricular programme?",
-      "Where can I see your activity list?",
-      "Do you offer Duke of Edinburgh?",
-      "What trips or tours do you run?",
-      "How do pupils get involved outside class?"
+    "question": [
+      "Is there a school bus service?",
+      "How can my daughter travel to school?",
+      "Do you provide transport?"
     ],
-    "reply": "<p>We offer a broad and engaging co-curricular programme that supports students\u2019 wider development. You can learn more on our [Co-Curricular Programme](https://www.morehouse.org.uk/beyond-the-classroom/co-curricular-programme/) page.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "We offer a variety of travel options for pupils, including school bus services and good public transport links. For more information, please visit our [Contact & Location page](https://www.morehouse.org.uk/contact/) or get in touch if you would like to discuss your route.",
+    "tags": ["transport", "bus", "location"]
   },
   {
-    "message": "how do i contact admissions",
-    "variants": [
-      "How do I contact admissions?",
-      "Where can I find your contact info?",
-      "Can I speak to someone in admissions?",
-      "How do I call the school?",
-      "Is there a contact form?",
-      "What\u2019s the best way to reach you?",
-      "Can I email the admissions team?",
-      "Do you have an admissions number?",
-      "Where is your contact page?",
-      "How do I ask more questions?"
+    "question": [
+      "Do you offer learning support or SEN provision?",
+      "What help is there for pupils with additional needs?",
+      "Can you tell me about your learning support?"
     ],
-    "reply": "<p>You can reach our Admissions Team using the details on the [Contact](https://www.morehouse.org.uk/contact/) page, or by replying to this message. We\u2019re here to support you throughout the admissions process.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "We provide a supportive environment for all pupils, with tailored learning support and SEN provision where needed. Our specialist team works closely with families to ensure every girl can thrive. Please see our [Pastoral Care page](https://www.morehouse.org.uk/pastoral-care/) for further details, or contact me to discuss your daughter’s needs.",
+    "tags": ["sen", "learning support", "pastoral care"]
   },
   {
-    "message": "do you accept international students",
-    "variants": [
-      "Do you accept international students?",
-      "Can overseas pupils apply?",
-      "What are your visa requirements?",
-      "Do you offer support for international families?",
-      "Where is your international admissions page?",
-      "Are you a licensed visa sponsor?",
-      "How do I apply from abroad?",
-      "Is English support provided?",
-      "Do international applicants need interviews?",
-      "What support is available for EAL students?"
+    "question": [
+      "How big are your classes?",
+      "What is the average class size?",
+      "How many pupils per class?"
     ],
-    "reply": "<p>Yes, we welcome international applications. Please visit our [International Applications and Visas](https://www.morehouse.org.uk/international-applications-and-visas/) page for guidance on the admissions process and visa requirements.<br><br>Admissions Team  <br>More House School</p>"
+    "answer": "We believe small class sizes make a real difference to learning. This allows our teachers to know each pupil as an individual and offer the right level of challenge and support. More information about our academic approach can be found on our [Academic Life page](https://www.morehouse.org.uk/academic-life/).",
+    "tags": ["class size", "teaching", "academics"]
+  },
+  {
+    "question": [
+      "Do you offer sport and PE?",
+      "What sports can my daughter take part in?",
+      "How important is sport at More House?"
+    ],
+    "answer": "Sport and physical activity are central to life at More House. We offer a wide variety of sports for all ages and abilities, encouraging teamwork, resilience, and enjoyment. Visit our [Sport page](https://www.morehouse.org.uk/co-curricular/sport/) to find out more.",
+    "tags": ["sport", "pe", "co-curricular"]
+  },
+  {
+    "question": [
+      "How do you communicate with parents?",
+      "How will I receive updates?",
+      "Is there a parent portal or newsletter?"
+    ],
+    "answer": "We keep parents closely informed through regular newsletters, the parent portal, email updates, and meetings with staff. We also encourage open communication at any time—please feel free to get in touch whenever you have a question or concern.",
+    "tags": ["parent communication", "newsletter", "updates"]
+  },
+  {
+    "question": [
+      "What is your pastoral care like?",
+      "How do you look after pupils’ wellbeing?",
+      "Is support available if my daughter is struggling?"
+    ],
+    "answer": "Pastoral care is at the heart of everything we do. Each pupil is supported by her form tutor and our wider pastoral team, who work together to ensure every girl feels safe, valued, and able to thrive. Find out more on our [Pastoral Care page](https://www.morehouse.org.uk/pastoral-care/).",
+    "tags": ["pastoral care", "wellbeing", "support"]
+  },
+  {
+    "question": [
+      "What is your approach to homework?",
+      "How much homework do pupils get?",
+      "Is homework supported?"
+    ],
+    "answer": "Homework at More House is designed to reinforce classroom learning and encourage independent study skills. We aim to provide a balanced approach, with support available if your daughter needs it. If you’d like more details about our academic life, please see the [Academic Life page](https://www.morehouse.org.uk/academic-life/).",
+    "tags": ["homework", "academics", "support"]
+  },
+  {
+    "question": [
+      "Do you offer music or drama opportunities?",
+      "Are there concerts or performances?",
+      "How can my daughter get involved in the arts?"
+    ],
+    "answer": "Music and drama are a big part of life at More House. Pupils can join choirs, ensembles, productions, and individual lessons—whatever their interests or ability. You can find out more on our [Co-Curricular page](https://www.morehouse.org.uk/co-curricular/), and I’m always happy to discuss your daughter’s interests.",
+    "tags": ["music", "drama", "arts"]
+  },
+  {
+    "question": [
+      "Do you have before and after school care?",
+      "Is wraparound care available?",
+      "What are the hours for pupils?"
+    ],
+    "answer": "We offer flexible wraparound care to support busy families, with supervised sessions before and after school. If you’d like to discuss timings or arrangements, please contact me or visit our [Contact & Location page](https://www.morehouse.org.uk/contact/).",
+    "tags": ["wraparound", "before school", "after school"]
+  },
+  {
+    "question": [
+      "What makes More House unique?",
+      "Why should I choose More House for my daughter?",
+      "What is special about your school?"
+    ],
+    "answer": "At More House, we pride ourselves on knowing every pupil as an individual and helping her to flourish—both academically and personally. Our strong sense of community and tailored opportunities mean each girl is supported to achieve her full potential. If you would like to discover our ethos, please visit our [About Us page](https://www.morehouse.org.uk/about-us/).",
+    "tags": ["ethos", "unique", "about"]
+  },
+  {
+    "question": [
+      "Can my daughter join mid-year?",
+      "Do you accept in-year admissions?",
+      "Is there a waiting list?"
+    ],
+    "answer": "We welcome enquiries for mid-year or in-year admissions whenever places are available. If you would like to discuss your daughter’s situation, please contact me directly or visit our [Admissions page](https://www.morehouse.org.uk/admissions/) for guidance.",
+    "tags": ["in-year admissions", "mid-year", "waiting list"]
+  },
+  {
+    "question": [
+      "How do I contact you for more information?",
+      "Who do I speak to about admissions?",
+      "Can I arrange a call or meeting?"
+    ],
+    "answer": "You are very welcome to contact me directly by phone or email—I am always happy to help with any questions about admissions or school life. You can also find our contact details and location on the [Contact & Location page](https://www.morehouse.org.uk/contact/).",
+    "tags": ["contact", "admissions", "information"]
+  },
+  {
+    "question": [
+      "What are your entry requirements?",
+      "How do you assess applicants?",
+      "Is there an entrance exam?"
+    ],
+    "answer": "Entry requirements vary by year group, and we aim to make our process as supportive as possible. Details of our assessment and admissions process are available on the [Admissions page](https://www.morehouse.org.uk/admissions/). If you have specific questions, please do get in touch.",
+    "tags": ["entry requirements", "assessment", "admissions"]
   }
 ]

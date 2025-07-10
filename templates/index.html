@@ -61,12 +61,37 @@
       cursor: pointer;
       transition: background .3s;
     }
+    .typeBtn {
+      background: #eee;
+      color: #333;
+      border: 1px solid #ccc;
+    }
+    .typeBtn.active {
+      background: var(--brand-blue);
+      color: #fff;
+      border-color: var(--brand-blue);
+    }
     button:hover:not(:disabled) {
       background: var(--brand-blue-hover);
     }
     button:disabled {
       background: #b8c6d6;
       cursor: not-allowed;
+    }
+    .brand-button {
+      background: var(--brand-blue);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.6em 1.4em;
+      font-size: 1.05em;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .brand-button:hover {
+      background: #0c3057;
+      box-shadow: 0 2px 12px rgba(12,48,87,0.09);
     }
     .buttons-row {
       display: flex;
@@ -89,6 +114,13 @@
       background: #ffffff;
       border: 1px solid #ccc;
       line-height: 1.5;
+    }
+    .reply-box ul,
+    .reply-box ol {
+      margin-left: 1.5rem;
+    }
+    .reply-box li > p {
+      margin-left: 1em;
     }
     .sentiment-box {
       background: #f4fdf2;
@@ -130,258 +162,1715 @@
       color: #666;
       margin-bottom: .6rem;
     }
+    .main-layout {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      align-items: flex-start;
+    }
+    .sidebar-container {
+      position: absolute;
+      top: 80px;
+      right: 2rem;
+      width: 200px;
+      background: #fff;
+      padding: 1.2rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      flex-direction: column;
+      align-items: stretch;
+      z-index: 1001;
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-container.open {
+      display: flex !important;
+      opacity: 1 !important;
+      pointer-events: auto !important;
+    }
+    .sidebar-btn {
+      width: 100%;
+      background: var(--brand-blue);
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-bottom: 1rem;
+    }
+    .sidebar-btn:hover {
+      background: var(--brand-blue-hover);
+    }
+    .upload-success-box {
+      background: #f4fdf2;
+      border-left: 4px solid #47B881;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #2d6240;
+      border-radius: 6px;
+    }
+    .upload-error-box {
+      background: #ffe9e9;
+      border-left: 4px solid #d33c3c;
+      padding: 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #a00;
+      border-radius: 6px;
+    }
+    #qa-modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0,0,0,0.25);
+    }
+    #qa-modal .qa-modal-content {
+      background: #fff;
+      max-width: 700px;
+      margin: 2em auto;
+      padding: 2em 2em 1em 2em;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      position: relative;
+      font-family: var(--font-sans);
+    }
+    #qa-modal h2 {
+      margin-top:0;
+      color: var(--brand-blue);
+    }
+    #qa-search {
+      width:100%;
+      padding:0.6em 1em;
+      margin-bottom:1em;
+      border-radius:6px;
+      border:1px solid #d4d4d4;
+      font-size:1em;
+    }
+    #qa-list {
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    #qa-list .qa-block {
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1em;
+      margin-bottom: 1em;
+    }
+    #qa-list strong {
+      color: var(--brand-blue);
+      font-size: 1.03em;
+    }
+    #qa-list span[contenteditable] {
+      outline: 1.5px solid transparent;
+      transition: outline-color 0.2s;
+      min-width: 50px;
+      display: inline-block;
+    }
+    #qa-list span[contenteditable]:focus {
+      outline-color: var(--brand-blue);
+      background: #f9f9fb;
+    }
+    #qa-list .qa-actions {
+      margin-top: 0.8em;
+      text-align: right;
+    }
+    #qa-list .qa-actions button {
+      background: var(--brand-blue);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 0.4em 1em;
+      margin-right: 0.4em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    #qa-list .qa-actions button:last-child {
+      background: #e84a5f;
+      color: white;
+      margin-right: 0;
+    }
+    #qa-list .qa-actions button:hover {
+      filter: brightness(0.9);
+    }
+    #qa-close {
+      position:absolute;
+      top:1em;
+      right:1em;
+      background:none;
+      border:none;
+      font-size:1.5em;
+      color:var(--brand-blue);
+      cursor:pointer;
+    }
+    #qa-status {
+      color: var(--brand-blue);
+      margin-top:1em;
+      font-style: italic;
+    }
+    /* PDF Library Modal */
+    #pdfLibraryModal {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      padding: 1.5rem;
+      width: 600px;
+      min-width: 400px;
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 2000;
+      font-family: var(--font-sans);
+      resize: horizontal;
+      overflow: auto;
+    }
+    #pdfLibrary-close {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.3rem;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      color: var(--brand-blue);
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    /* Usage Insights Modal */
+    #usageInsightsModal {
+      display: none;
+      position: fixed;
+      top: 8%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 0 24px rgba(0,0,0,0.22);
+      padding: 2rem 2.2rem 1.4rem 2.2rem;
+      width: 730px;
+      min-width: 400px;
+      max-width: 96vw;
+      max-height: 85vh;
+      overflow-y: auto;
+      z-index: 2100;
+      font-family: var(--font-sans);
+    }
+    #usageInsights-close {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.3rem;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      color: var(--brand-blue);
+      cursor: pointer;
+      z-index: 10;
+    }
+    #usageInsightsModal h2 {
+      margin-top:0;
+      font-size: 1.4rem;
+      color: var(--brand-blue);
+    }
+    .insights-section {
+      margin-bottom: 1.4rem;
+    }
+    .insights-keyval {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.7rem 2.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .insights-keyval div {
+      min-width: 160px;
+      font-size: 1.07em;
+      margin-bottom: 0.5rem;
+    }
+    .insights-bar {
+      height: 16px;
+      background: #e3e9f2;
+      border-radius: 7px;
+      margin-bottom: 0.3em;
+      display: block;
+      position: relative;
+    }
+    .insights-bar-inner {
+      background: var(--brand-blue);
+      border-radius: 7px;
+      height: 100%;
+      position: absolute;
+      left: 0; top: 0;
+      transition: width 0.7s;
+    }
+    .insights-chart-label {
+      font-size: 0.98em;
+      color: #444;
+      margin-bottom: 0.17em;
+    }
+    .insights-table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-bottom: 1.3em;
+    }
+    .insights-table th, .insights-table td {
+      border: 1px solid #d7d7d7;
+      padding: 0.5em 0.7em;
+      text-align: left;
+      font-size: 0.98em;
+    }
+    .insights-table th {
+      background: #f4f6fa;
+      color: #003366;
+      font-weight: 600;
+    }
+    .insights-note {
+      color: #888;
+      font-size: 0.96em;
+      margin-top: 0.7em;
+      margin-bottom: 0.7em;
+      font-style: italic;
+    }
+    /* Link Mappings Modal */
+    #linkMappingsModal {
+      display: none;
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+      padding: 1.5rem;
+      max-width: 90vw;
+      width: 600px;
+      min-width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+      z-index: 2000;
+      font-family: var(--font-sans);
+      resize: horizontal;
+      position: fixed;
+    }
+    #linkMappings-close {
+      position: absolute;
+      top: 1.1rem;
+      right: 1.3rem;
+      background: none;
+      border: none;
+      font-size: 1.5em;
+      color: var(--brand-blue);
+      cursor: pointer;
+      z-index: 10;
+    }
+    /* Make reply preview links */
+    .reply-box a {
+      color: #0056cc;
+      text-decoration: none;
+      cursor: pointer;
+      border-bottom: 1px dotted #aad;
+      transition: border-color 0.15s;
+    }
+    .reply-box a:visited {
+      color: #7b3fa7;
+    }
+    .reply-box a:hover {
+      color: #003366;
+      border-bottom: 1.5px solid #003366;
+      text-decoration: none;
+    }
+
+    #linkMappingsModal h2 {
+      margin-top:0;
+      color: var(--brand-blue);
+      display: inline-block;
+      vertical-align: middle;
+    }
+    .modal-bg {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.25);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg[style*="display: flex"] {
+      display: flex !important;
+    }
+
   </style>
 </head>
 <body>
-  <div class="container" role="main">
-    <div style="display: flex; align-items: center; justify-content: space-between;">
-      <h1>SMART Reply</h1>
-      <div style="font-size: 0.9rem; color: #555;">
-        Powered by
-        <img src="https://more-house-school.s3.eu-west-2.amazonaws.com/CT__300dpi_primary_full.jpg"
-             alt="Cognitive Tasking" height="28"
-             style="vertical-align: middle; margin-left: 4px; opacity: 0.85;">
+<div class="main-layout">
+  <div class="app-container">
+    <div class="container" role="main">
+      <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h1>SMART Reply</h1>
+        <div style="font-size: 0.9rem; color: #555;">
+          Powered by
+          <img src="https://more-house-school.s3.eu-west-2.amazonaws.com/CT__300dpi_primary_full.jpg"
+               alt="Cognitive Tasking" height="28"
+               style="vertical-align: middle; margin-left: 4px; opacity: 0.85;">
+        </div>
       </div>
-    </div>
-    <p class="subtext">Paste a parent email below — SMART Reply will write a professional reply using More House School’s official information.</p>
-
-    <label for="parentMessage">Parent Email:</label>
-    <textarea id="parentMessage" placeholder="E.g. Do you offer wrap-around care or bursaries for siblings?"></textarea>
-
-    <label for="instructionBox">Optional Instruction:</label>
-    <div class="field-desc">Add any special tone or style instructions (e.g. "Make it warmer", "Be concise").</div>
-    <textarea id="instructionBox"></textarea>
-
-    <div class="buttons-row">
-      <button id="submitBtn">Generate Reply</button>
-      <button id="clearBtn">Clear Text</button>
-      <span id="loading" class="loader" style="display:none;" aria-live="polite"></span>
-    </div>
-
-    <div id="sentimentBox" class="sentiment-box" aria-live="polite"></div>
-
-    <div id="replyLabel" class="reply-label" style="display:none;">
-      👇 Select and copy the reply below manually to paste into your email with full formatting and working hyperlinks.
-    </div>
-    <div id="replyBox" class="reply-box" aria-live="polite"></div>
-
-    <div id="errorBox" class="error-box" role="alert"></div>
-
-    <div id="reviseSection" class="revise-section">
-      <label for="reviseBox">Refine this reply with an instruction:</label>
-      <textarea id="reviseBox" placeholder="E.g. Shorten, remove bursary link …"></textarea>
-
-      <label for="urlBox" style="margin-top:1rem;display:block;">💡 Add Smart Links to Your Replies</label>
-      <div class="field-desc" style="margin-bottom:.4rem;">
-        Automatically turn important phrases (like <em>Head</em> or <em>Visit Us</em>) into clickable links.<br><br>
-        <strong>How it works:</strong><br>
-        Just type each phrase and the webpage you want it to link to.<br>
-        Use this format:<br>
-        <code>Head=https://site.com/head; Visit Us=https://site.com/visit</code><br><br>
-        👉 Separate each pair with a semicolon (<code>;</code>)
-      </div>
-      <textarea id="urlBox" style="width:100%;padding:0.6rem;height:80px;margin-bottom:1rem;" placeholder="E.g. Head=https://..., Visit Us=https://..."></textarea>
-
-      <label style="font-size: 0.9em; display: block; margin-bottom: 0.5rem;">
-        <input type="checkbox" id="ctaToggle" checked />
-        Include subtle call-to-action
-      </label>
-
+      <p class="subtext">Paste a parent email or enquiry form below — SMART Reply will write a professional reply using the School’s official information.</p>
+      <label for="parentMessage">Parent Email:</label>
+      <textarea id="parentMessage" placeholder="E.g. Do you offer wrap-around care or bursaries for siblings?"></textarea>
+      <label for="instructionBox">Optional Instruction:</label>
+      <div class="field-desc">Add any special tone or style instructions (e.g. “Make it warmer”, “Be concise”).</div>
+      <textarea id="instructionBox"></textarea>
       <div class="buttons-row">
-        <button id="reviseBtn">Revise Response</button>
-        <button id="saveBtn">Save as Standard</button>
-        <span id="saveStatus" style="color: #47B881; font-weight: 600;"></span>
+        <button id="submitBtn">Generate Reply</button>
+        <button id="clearBtn">Clear Text</button>
+        <span id="loading" class="loader" style="display:none;" aria-live="polite"></span>
+      </div>
+      <div id="sentimentBox" class="sentiment-box" aria-live="polite" style="display:none;"></div>
+      <div id="replyLabel" class="reply-label" style="display:none;">
+        👇 Select and copy the reply below manually to paste into your email with full formatting and working hyperlinks.
+      </div>
+      <div id="replyBox" class="reply-box" contenteditable="true" tabindex="0" aria-live="polite" style="display:none;"></div>
+      <div id="errorBox" class="error-box" role="alert" style="display:none;"></div>
+      <div id="reviseSection" class="revise-section" style="display:none;">
+  <label for="reviseBox">Refine this reply with an instruction:</label>
+  <textarea id="reviseBox" placeholder="E.g. Shorten, remove bursary link …"></textarea>
+  <label for="urlBox" style="margin-top:1rem;display:block;">Add Smart Links to Your Replies</label>
+  <div class="field-desc" style="margin-bottom:.4rem;">
+    Automatically turn important phrases (like <em>Head of School</em> or <em>Visit Us</em>) into clickable links.<br><br>
+    <strong>How it works:</strong><br>
+    Highlight any word or phrase in your reply, then click “Add Link to Selection”.<br>
+    You’ll be prompted to enter the web address for the link.<br>
+
+  </div>
+  <label style="font-size: 0.9em; display: block; margin-bottom: 0.5rem;">
+    <input type="checkbox" id="ctaToggle" checked />
+    Include subtle call-to-action
+  </label>
+  <div class="buttons-row">
+    <button id="reviseBtn">Revise Response</button>
+    <button id="saveBtn">Save as Standard</button>
+    <button id="addLinkBtn" type="button">Add Link to Selection</button>
+  </div>
+  <span id="saveStatus" style="color: var(--sentiment-green); font-weight: 600;"></span>
+</div>
+
+        </div>
       </div>
     </div>
+    <button id="sidebarToggle" title="Menu" style="
+      position: absolute;
+      right: 2rem;
+      top: 2rem;
+      font-size: 1.6rem;
+      background: var(--brand-blue);
+      color: #fff;
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      z-index: 1000;
+    ">☰</button>
+    <div class="sidebar-container">
+      <button class="sidebar-btn" id="pdfLibraryBtn" title="View and manage uploaded PDFs">PDF Library</button>
+      <button class="sidebar-btn" id="editRepliesBtn" title="View and edit saved replies">Edit Q&A</button>
+      <button class="sidebar-btn" id="linkMappingsBtn" title="Manage smart links and anchors">Link Mappings</button>
+      <button class="sidebar-btn" id="usageInsightsBtn" title="View reply volume and sentiment trends">Usage Insights</button>
+      <button class="sidebar-btn" id="extractorBtn" title="Create replies from full email threads">Email Import</button>
+      <button class="sidebar-btn" id="fixKbBtn" title="Search & edit knowledge base">Fix Knowledge Base</button>
+      <button class="sidebar-btn" id="helpFaqBtn" title="How to use SMART Reply">Help & FAQ</button>
+    </div>
   </div>
-  <!-- PDF Upload Section -->
-  <div class="container">
-    <hr style="margin: 2rem 0;">
-    <h3>Upload PDFs to Expand Knowledge Base</h3>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <input type="file" name="pdfs" id="pdfs" accept="application/pdf" multiple required style="display:none;">
-      <label for="pdfs" style="padding: 0.6rem 1.2rem; background: var(--brand-blue); color: #fff; border-radius: 5px; cursor: pointer; display: inline-block;">Choose PDF(s)</label>
-      <button type="submit" style="margin-left: 10px;">Upload PDFs</button>
-      <div id="uploadStatus" style="margin-top: 1rem; font-size: 0.95rem; color: #333;"></div>
-    </form>
+</div>
+
+<!-- Usage Insights Modal -->
+<div id="usageInsightsModal">
+  <button id="usageInsights-close" onclick="closeUsageInsights()" title="Close">&times;</button>
+  <h2>📊 Usage Insights</h2>
+  <div id="usageInsightsContent">
+  <div class="insights-note">Loading insights...</div>
+  <div id="strategyAdviceSection" style="margin-top: 2rem; padding: 1rem; border: 1px solid #003366; border-radius: 8px; background: #e6f0ff; color: #003366; font-weight: 600; display: none;">
+    <h3 style="margin-top: 0;">Strategic Advice</h3>
+    <p id="strategyAdviceText" style="font-weight: normal; white-space: pre-wrap;"></p>
   </div>
-  <script>
-  const $ = id => document.getElementById(id);
-  const submitBtn = $('submitBtn'), clearBtn = $('clearBtn'),
-        loadingSp = $('loading'), replyBox = $('replyBox'), sentimentBox = $('sentimentBox'),
-        errorBox = $('errorBox'), textarea = $('parentMessage'),
-        instructionEl = $('instructionBox'), urlEl = $('urlBox'),
-        reviseEl = $('reviseBox'), reviseBtn = $('reviseBtn'), saveBtn = $('saveBtn'),
-        reviseSection = $('reviseSection'), replyLabel = $('replyLabel');
+</div>
+</div>
 
-  let lastMessage = '', lastReply = '';
-  textarea.focus();
+<!-- Edit Static Q&A Modal -->
+<div id="qa-modal">
+  <div class="qa-modal-content">
+    <button id="qa-close">&times;</button>
+    <h2>📝 Edit Static Q&amp;A</h2>
+    <input id="qa-search" type="text" placeholder="Search Q&A...">
+    <div id="qa-list"></div>
+    <div id="qa-status"></div>
+  </div>
+</div>
 
-  // ENTER = submit parent message
-  textarea.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      submitBtn.click();
-    }
-  });
+<!-- PDF Library Modal -->
+<div id="pdfLibraryModal">
+  <button id="pdfLibrary-close" onclick="closePdfLibrary()" title="Close">&times;</button>
+  <h2 style="margin-top:0; font-size: 1.4rem; color: var(--brand-blue);">📚 PDF Library</h2>
+  <div style="margin-bottom: 1rem;">
+    <input type="file" accept="application/pdf" multiple id="pdfInput" style="display:none;">
+    <button class="sidebar-btn" onclick="document.getElementById('pdfInput').click()">Upload PDFs</button>
+    <div id="uploadStatusSuccess" class="upload-success-box" style="display:none;"></div>
+    <div id="uploadStatusError" class="upload-error-box" style="display:none;"></div>
+    <!-- Progress bar goes here -->
+  <div id="pdfProgressBar" style="width:100%;background:#eee;margin-top:8px;height:24px;border-radius:5px;display:none;">
+    <div id="pdfProgressInner" style="height:100%;width:0;background:#4caf50;color:#fff;text-align:center;line-height:24px;border-radius:5px;">
+      0%
+    </div>
+  </div>
+</div>
+  <ul id="pdfList" style="list-style:none; padding-left:0; margin-bottom:1rem;"></ul>
+  <div style="text-align:right; margin-top:1rem;">
+    <button onclick="closePdfLibrary()" style="
+      background: var(--brand-blue);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      transition: background 0.3s;
+    ">Close</button>
+  </div>
+</div>
+<!-- Link Mappings Modal -->
+<div id="linkMappingsModal">
+  <button id="linkMappings-close" onclick="closeLinkMappings()" title="Close">&times;</button>
+  <h2 style="margin-top:0; font-size: 1.4rem; color: var(--brand-blue);">🔗 Smart Link Mappings</h2>
+  <div id="linkMappingsContainer" style="margin-bottom: 1rem;">
+    <!-- Dynamically populated -->
+  </div>
+  <button onclick="addMappingRow()" style="
+    margin-bottom: 1rem;
+    background: #eee;
+    border: 1px solid #ccc;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    color: #333;
+    transition: background 0.3s;
+  ">➕ Add Mapping</button>
+  <div style="text-align:right; margin-top: 1rem;">
+    <button onclick="saveLinkMappings()" style="
+      background: var(--brand-blue);
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 0.5rem;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+    ">Save</button>
+    <button onclick="closeLinkMappings()" style="
+      background: #eee;
+      color: #333;
+      border: 1px solid #ccc;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+    ">Close</button>
+  </div>
+</div>
 
-  // ENTER = revise response
-  reviseEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      reviseBtn.click();
-    }
-  });
+<!-- Email Import Modal for batch Q&A creation -->
+<div id="extractorModal" style="
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  padding: 1.5rem;
+  max-width: 900px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 2000;
+  font-family: var(--font-sans);
+">
+  <h2 style="margin-top: 0; color: var(--brand-blue);">📥 Create Standard Replies from Email Threads</h2>
+  <p style="color: #888; font-size: 0.95em; font-style: italic; margin-top: -0.5em;">
+    Please cut and paste the full email thread to increase knowledge base.
+  </p>
+  <textarea id="rawThreadInput" style="width:100%;height:160px;padding:1rem;margin-bottom:1rem;font-family:inherit;"></textarea>
+  <button onclick="extractReplyVariants()" style="margin-bottom: 1rem;">Create</button>
+  <div id="extractedResults" style="display:none;"></div>
+  <div style="text-align:right; margin-top:1rem;">
+    <button onclick="saveExtractedReplies()" style="background: var(--brand-blue); color: #fff; padding: 0.6rem 1.2rem; border-radius: 6px;">Save</button>
+    <button onclick="closeExtractorModal()" style="margin-left:0.5rem;">Cancel</button>
+  </div>
+</div>
 
-  submitBtn.onclick = async () => {
-    const message = textarea.value.trim();
-    const instruction = instructionEl.value.trim();
-    const url_box = urlEl?.value.trim() || "";
-    if (!message) { alert("Please paste an email before submitting."); return; }
-    prepUI();
+<!-- Fix Knowledge Base Modal -->
 
-    try {
-      const include_cta = document.getElementById("ctaToggle")?.checked ?? true;
+<div id="fixKbModal" class="modal-bg" style="display:none;">
+  <div class="modal-content" style="max-width:700px;width:96vw;max-height:90vh;overflow-y:auto;padding:2rem 2.2rem 1.5rem 2.2rem;background:#fff;border-radius:9px;box-shadow:0 6px 36px rgba(0,0,0,0.13);position:fixed;top:8vh;left:50%;transform:translateX(-50%);z-index:9999;">
+    <button id="closeFixKbModal" style="position:absolute;top:1rem;right:1rem;font-size:1.5rem;">&times;</button>
+    <h2>Fix Knowledge Base</h2>
+    <input type="text" id="kbSearchInput" placeholder="Search phrase or keyword..." style="width:65%;padding:0.5em;">
+    <button id="kbSearchBtn">Search</button>
+    <div id="kbSearchResults" style="margin-top:1em;"></div>
+  </div>
+</div>
 
-      const payload = {
-        message,
-        instruction,
-        url_box,
-        include_cta
-      };
+    <div id="helpFaqModal" class="modal-bg" style="display:none;">
+  <div class="modal-content" style="max-width:600px;width:96vw;max-height:80vh;overflow-y:auto;padding:2rem 2.2rem 1.5rem 2.2rem;background:#fff;border-radius:9px;box-shadow:0 6px 36px rgba(0,0,0,0.13);position:relative;">
+    <button id="closeHelpFaq" style="position:absolute;top:1.1rem;right:1.1rem;background:none;border:none;font-size:1.7em;color:#999;cursor:pointer;">&times;</button>
+    <h2 style="margin-top:0;color:#003366;">SMART Reply — Help & User Guide</h2>
+    <input id="helpFaqSearch" type="text" placeholder="Search Help & FAQ..." style="width:100%;margin-bottom:1.1em;padding:0.65em 1em;font-size:1em;border-radius:5px;border:1px solid #ccc;">
+    
+    <!-- Introduction -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>Welcome to SMART Reply</strong><br>
+      SMART Reply is your AI-powered assistant for school admissions. It automates and improves your responses to parent enquiries using only approved school information, saving you time and ensuring professionalism and consistency in every reply.
+    </div>
+    
+    <!-- Parent Email & Reply Workflow -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I generate a reply to a parent enquiry?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li><b>Copy the parent’s email</b> (the full text, including their questions).</li>
+        <li><b>Paste it into the “Parent Email” box</b> at the top of SMART Reply.</li>
+        <li>(Optional) In the “Optional Instructions” box, add any directions for tone or content (e.g., “Make the reply more concise and formal”, “Focus on our after-school activities”).</li>
+        <li>Click <b>Generate Reply</b>.</li>
+        <li>Review the AI-generated reply in the reply box below.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">Pro Tip: You can give very specific instructions to get exactly the tone or detail you want.</span>
+    </div>
+    
+    <!-- Revise Response -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I revise a draft reply?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>Type additional instructions in the “Optional Instructions” box (e.g., “Make it warmer”, “Add more about our music programme”, “Remove the part about open days”).</li>
+        <li>Click <b>Revise Response</b>.</li>
+        <li>The AI will update the reply with your new instructions, keeping your previous changes.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">You can repeat this as many times as you need until the response is perfect.</span>
+    </div>
+    
+    <!-- Add Hyperlinks / Smart Links -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I add hyperlinks (“Smart Links”) in my replies?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>In the reply box, highlight the word or phrase you want to turn into a clickable link (e.g., “Admissions Policy”).</li>
+        <li>Click <b>Add Link to Selection</b> below the reply box.</li>
+        <li>Paste or type the web address (URL) for the link (e.g., your school’s admissions policy page).</li>
+        <li>Repeat for any additional links you want to include.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">Pro Tip: Use links for key policies, forms, or event pages to make replies more helpful.</span>
+    </div>
+    
+    <!-- Save as Standard -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I save a reply as a standard/template?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>Once you are happy with a reply (including edits and links), click <b>Save as Standard</b>.</li>
+        <li>This adds your reply to the school’s knowledge base as a template for similar questions in future.</li>
+        <li>You can view, edit, or delete saved replies/templates in the <b>Edit Q&A</b> section of the menu.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">Pro Tip: The more standards you save, the smarter and faster SMART Reply becomes.</span>
+    </div>
+    
+    <!-- PDF Library -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I add and use PDFs?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>Click <b>PDF Library</b> in the menu.</li>
+        <li>Click <b>Upload PDF</b> to add a new policy, handbook, or information pack.</li>
+        <li>Uploaded PDFs become part of the knowledge base. SMART Reply will automatically use their content to answer relevant parent questions.</li>
+        <li>You can manage or delete PDFs in this section as well.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">Pro Tip: Always upload the latest versions of your policies and forms for best results.</span>
+    </div>
+    
+    <!-- Edit Q&A -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I edit or delete standard replies/templates?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>Click <b>Edit Q&A</b> in the menu.</li>
+        <li>You will see a list of all saved standard replies.</li>
+        <li>Click “Edit” to change any template, or “Delete” to remove it.</li>
+        <li>Edits are saved instantly and affect all future replies to similar questions.</li>
+      </ol>
+    </div>
+    
+    <!-- Link Mappings -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>What are Link Mappings and how do I use them?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>Click <b>Link Mappings</b> in the menu.</li>
+        <li>You can add or edit “anchor phrases” and the URLs they should point to (e.g., “School Calendar” → school calendar link).</li>
+        <li>This lets SMART Reply automatically insert the correct links when generating replies.</li>
+        <li>Update mappings any time your website or document URLs change.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">Pro Tip: Keep your key anchor phrases updated for seamless, accurate linking.</span>
+    </div>
+    
+    <!-- Usage Insights -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I use Usage Insights?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>Click <b>Usage Insights</b> in the menu.</li>
+        <li>See stats about your most common parent questions, how often standard replies are used, and sentiment analysis of responses.</li>
+        <li>Identify gaps (e.g., frequent questions with no standard reply) and create new templates to cover them.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">Pro Tip: Use these insights to continuously improve your response quality and consistency.</span>
+    </div>
+    
+    <!-- Email Import -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How do I use Email Import?</strong><br>
+      <ol style="margin-left:1.2em;">
+        <li>Click <b>Email Import</b> in the menu.</li>
+        <li>Paste in a whole email conversation or drag-and-drop a .eml file exported from Outlook.</li>
+        <li>SMART Reply will extract all the parent questions and your historical replies, letting you instantly create new standards from your real correspondence history.</li>
+        <li>Review the suggested pairs and save any you want as standards.</li>
+      </ol>
+      <span style="color:#888;font-size:0.97em;">Pro Tip: Regularly import past email threads to quickly grow your knowledge base with real parent questions and real answers.</span>
+    </div>
+    
+    <!-- How SMART Reply gets smarter -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>How does the knowledge base grow and get smarter?</strong><br>
+      <ul style="margin-left:1.2em;">
+        <li>Every time you save a standard reply, import an email, or upload a PDF, SMART Reply’s accuracy and coverage increases.</li>
+        <li>The system always uses only your school’s approved content—no guessing, no “hallucinations.”</li>
+        <li>The more you use it, the less time you spend writing from scratch.</li>
+      </ul>
+    </div>
+    
+    <!-- Troubleshooting & Support -->
+    <div class="faq-section" style="margin-bottom:1.1em;">
+      <strong>Troubleshooting & Support</strong><br>
+      <ul style="margin-left:1.2em;">
+        <li><b>Reply seems generic or misses a detail:</b> Try rephrasing your instructions, check that your PDFs or standards are up to date, and consider adding a new standard for that question.</li>
+        <li><b>A hyperlink is wrong or missing:</b> Check the Link Mappings menu for typos or old URLs.</li>
+        <li><b>PDFs don’t appear in replies:</b> Make sure the PDF is uploaded and relevant to the question.</li>
+        <li><b>Still stuck?</b> Email Robert Ottley at <a href="mailto:robert.ottley@cognitivetasking.com">robert.ottley@cognitivetasking.com</a></li>
+      </ul>
+    </div>
+    <div style="font-size:0.98em;color:#888;text-align:right;">SMART Reply &copy; Cognitive Tasking, 2025</div>
+  </div>
+</div>
 
-      const r = await fetch("/reply", {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
 
-      const data = await r.json();
-      if (r.ok && data.reply) {
-        lastMessage = message;
-        lastReply = data.reply;
-        renderReply(data);
+
+<script>
+
+let lastMessage = "";
+let lastReply = "";
+
+document.addEventListener("DOMContentLoaded", function() {
+  var sidebarToggle = document.getElementById("sidebarToggle");
+  var sidebarContainer = document.querySelector(".sidebar-container");
+
+  // Force sidebar hidden on page load
+  if (sidebarContainer) {
+    sidebarContainer.classList.remove("open");
+    sidebarContainer.style.display = "none";
+    sidebarContainer.style.opacity = "0";
+    sidebarContainer.style.pointerEvents = "none";
+  }
+
+  if (sidebarToggle && sidebarContainer) {
+    sidebarToggle.addEventListener("click", function() {
+      if (sidebarContainer.classList.contains("open")) {
+        sidebarContainer.classList.remove("open");
+        sidebarContainer.style.display = "none";
+        sidebarContainer.style.opacity = "0";
+        sidebarContainer.style.pointerEvents = "none";
       } else {
-        throw new Error(data.error || "No reply generated.");
+        sidebarContainer.classList.add("open");
+        sidebarContainer.style.display = "flex";
+        sidebarContainer.style.opacity = "1";
+        sidebarContainer.style.pointerEvents = "auto";
       }
-    } catch (err) {
-      showError(err.message);
+    });
+  }
+
+
+
+// Usage Insights Modal
+var usageInsightsBtn = document.getElementById("usageInsightsBtn");
+var usageInsightsModal = document.getElementById("usageInsightsModal");
+var usageInsightsContent = document.getElementById("usageInsightsContent");
+usageInsightsBtn.onclick = function() {
+  usageInsightsModal.style.display = "block";
+  usageInsightsContent.innerHTML = '<div class="insights-note">Loading insights...</div>';
+  fetch('/usage-insights')
+    .then(res => res.json())
+    .then(data => renderUsageInsights(data))
+    .catch(err => {
+      usageInsightsContent.innerHTML = '<div style="color:#a00;">Failed to load usage insights.</div>';
+    });
+};
+window.closeUsageInsights = function() {
+  usageInsightsModal.style.display = "none";
+};
+
+function renderUsageInsights(data) {
+  console.log("Strategy advice:", data.strategy_advice);
+  
+if (data.error) {
+    usageInsightsContent.innerHTML = `<div style="color:#a00;">${data.error}</div>`;
+    return;
+  }
+  // Basic stats
+  let html = `
+    <div class="insights-section">
+      <div class="insights-keyval">
+        <div><strong>Total Replies:</strong> ${data.total_replies ?? 0}</div>
+        <div><strong>Total Revisions:</strong> ${data.total_revisions ?? 0}</div>
+        <div><strong>Avg. Sentiment:</strong> ${data.avg_sentiment !== undefined && data.avg_sentiment !== null ? data.avg_sentiment.toFixed(2) : "N/A"}</div>
+        <div><strong>Template Reply Rate:</strong> ${data.template_reply_rate !== undefined && data.template_reply_rate !== null ? (data.template_reply_rate*100).toFixed(1)+"%" : "N/A"}</div>
+      </div>
+      <div class="insights-keyval">
+
+          <div><strong>Most Recent Day:</strong> ${Object.keys(data.replies_per_day||{}).slice(-1)[0]||'N/A'}</div>
+        </div>
+      </div>
+    `;
+
+    // Replies per day chart
+    if (data.replies_per_day && Object.keys(data.replies_per_day).length > 0) {
+      html += `<div class="insights-section">
+        <div class="insights-chart-label"><strong>Replies Per Day</strong></div>`;
+      let max = Math.max(...Object.values(data.replies_per_day));
+      for (let day in data.replies_per_day) {
+        let v = data.replies_per_day[day];
+        html += `<div>
+          <span style="display:inline-block;width:80px;">${day}</span>
+          <span class="insights-bar"><span class="insights-bar-inner" style="width:${(v/max*100).toFixed(1)}%;"></span></span>
+          <span>${v}</span>
+        </div>`;
+      }
+      html += `</div>`;
     }
-  };
 
-  reviseBtn.onclick = async () => {
-    const instruction = reviseEl.value.trim();
-    const url_box = urlEl.value.trim();
-
-    if (!lastMessage || !lastReply) {
-      alert("Missing previous reply.");
-      return;
+    // Sentiment trend per day
+    if (data.sentiment_trend && Object.keys(data.sentiment_trend).length > 0) {
+      html += `<div class="insights-section">
+        <div class="insights-chart-label"><strong>Sentiment Trend</strong> <span style="font-size:0.95em;color:#777;">(by day)</span></div>`;
+      let vals = Object.values(data.sentiment_trend);
+      let min = Math.min(...vals), max = Math.max(...vals);
+      for (let day in data.sentiment_trend) {
+        let v = data.sentiment_trend[day];
+        let pct = ((v-min)/(max-min+0.01))*100;
+        html += `<div>
+          <span style="display:inline-block;width:80px;">${day}</span>
+          <span class="insights-bar"><span class="insights-bar-inner" style="width:${pct}%;background:#47B881;"></span></span>
+          <span>${v.toFixed(2)}</span>
+        </div>`;
+      }
+      html += `</div>`;
     }
 
-    if (!instruction && !url_box) {
-      alert("Please enter a revision instruction or updated links.");
-      return;
-    }
-
-    prepUI();
-
-    try {
-      const r = await fetch("/revise", {
-        method: "POST", headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: lastMessage,
-          previous_reply: lastReply,
-          instruction,
-          url_box
-        })
+    // Sentiment distribution
+    if (data.sentiment_distribution && Object.keys(data.sentiment_distribution).length > 0) {
+      html += `<div class="insights-section">
+        <div class="insights-chart-label"><strong>Sentiment Score Distribution</strong></div>
+        <table class="insights-table"><tr><th>Score</th><th>Count</th></tr>`;
+      Object.entries(data.sentiment_distribution).sort((a,b)=>Number(a[0])-Number(b[0])).forEach(([score, count]) => {
+        html += `<tr><td>${score}</td><td>${count}</td></tr>`;
       });
-      const data = await r.json();
-      if (r.ok && data.reply) {
-        lastReply = data.reply;
-        renderReply(data);
-      } else {
-        throw new Error(data.error || "No revision generated.");
-      }
-    } catch (err) {
-      showError(err.message);
+      html += `</table></div>`;
     }
-  };
 
-  saveBtn.onclick = async () => {
-    if (!lastMessage || !lastReply) { alert("Nothing to save."); return; }
-    const urls = urlEl.value.split(';').map(x => x.trim()).filter(Boolean);
-    const res = await fetch("/save-standard", {
-      method: "POST",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: lastMessage, reply: lastReply, urls })
-    });
-    $('saveStatus').textContent = res.ok ? "Saved!" : "Error!";
-    setTimeout(() => { $('saveStatus').textContent = ''; }, 2000);
-  };
-
-  clearBtn.onclick = () => {
-    ['parentMessage','instructionBox','urlBox','reviseBox'].forEach(id => $(id).value = '');
-    lastMessage = lastReply = '';
-    ['replyBox', 'sentimentBox', 'errorBox'].forEach(id => { $(id).style.display = 'none'; $(id).innerHTML = ''; });
-    replyLabel.style.display = 'none';
-    reviseSection.style.display = 'none';
-    textarea.focus();
-  };
-
-  function prepUI() {
-    replyBox.innerHTML = "";
-    replyBox.style.display = 'block';
-    sentimentBox.style.display = 'none';
-    errorBox.style.display = 'none';
-    replyLabel.style.display = 'none';
-    submitBtn.disabled = true;
-    loadingSp.style.display = 'inline-block';
-  }
-
-  function renderReply(d) {
-    replyBox.innerHTML = d.reply;
-    replyBox.querySelectorAll("a").forEach(link => {
-      link.setAttribute("target", "_blank");
-      link.setAttribute("rel", "noopener noreferrer");
-    });
-
-    replyBox.style.display = 'block';
-    replyLabel.style.display = 'block';
-    loadingSp.style.display = 'none';
-    submitBtn.disabled = false;
-    reviseSection.style.display = 'block';
-
-    if (d.sentiment_score !== undefined) {
-      sentimentBox.innerHTML = `<strong>Sentiment Score:</strong> ${d.sentiment_score}/10<br><strong>Strategy:</strong> ${d.strategy_explanation}`;
-      sentimentBox.style.display = 'block';
+    // Top topics
+    if (data.topic_counts && Object.keys(data.topic_counts).length > 0) {
+      html += `<div class="insights-section">
+        <div class="insights-chart-label"><strong>Most Common Enquiry Topics</strong></div>
+        <table class="insights-table"><tr><th>Topic</th><th>Count</th></tr>`;
+      Object.entries(data.topic_counts).sort((a, b) => b[1]-a[1]).forEach(([topic, count]) => {
+        html += `<tr><td>${topic}</td><td>${count}</td></tr>`;
+      });
+      html += `</table></div>`;
     }
+
+    // Top smart links
+    if (data.top_link_anchors && Object.keys(data.top_link_anchors).length > 0) {
+      html += `<div class="insights-section">
+        <div class="insights-chart-label"><strong>Top Smart Link Anchors Used</strong></div>
+        <table class="insights-table"><tr><th>Anchor</th><th>Count</th></tr>`;
+      Object.entries(data.top_link_anchors).sort((a, b) => b[1]-a[1]).forEach(([anchor, count]) => {
+        html += `<tr><td>${anchor}</td><td>${count}</td></tr>`;
+      });
+      html += `</table></div>`;
+    }
+
+    // PDF usage
+    if (data.pdf_usage && Object.keys(data.pdf_usage).length > 0) {
+      html += `<div class="insights-section">
+        <div class="insights-chart-label"><strong>Most Referenced PDFs</strong></div>
+        <table class="insights-table"><tr><th>PDF/File</th><th>References</th></tr>`;
+      Object.entries(data.pdf_usage).sort((a, b) => b[1]-a[1]).forEach(([pdf, count]) => {
+        html += `<tr><td>${pdf}</td><td>${count}</td></tr>`;
+      });
+      html += `</table></div>`;
+    }
+
+    html += `<div class="insights-note">
+      Insights are based on usage of SMART Reply for generating and refining replies. No email sending is tracked. <br>
+      Trends and activity help the school understand parent interest and team workload.
+    </div>`;
+
+    if (data.summary) {
+      html += `
+        <div class="insights-section" style="margin-top:2.2em;">
+          <h3 style="margin:0 0 0.5em 0; color:#003366;">Insights Summary</h3>
+          <div style="font-size:1.09em; line-height:1.6; color:#223;">
+            ${data.summary.replace(/\n/g,"<br>")}
+          </div>
+        </div>
+      `;
+    }
+
+// ---- INSERT THE STRATEGY BLOCK HERE ----
+if (data.strategy_advice && data.strategy_advice.trim().length > 0) {
+  html += `
+    <div style="margin-top: 2rem; padding: 1rem; border: 1px solid #003366; border-radius: 8px; background: #e6f0ff; color: #003366; font-weight: 600;">
+      <h3 style="margin-top: 0;">Strategic Advice</h3>
+      <p style="font-weight: normal; white-space: pre-wrap;">${data.strategy_advice}</p>
+    </div>
+  `;
+}
+// ---- END STRATEGY BLOCK ----
+
+    usageInsightsContent.innerHTML = html;
   }
 
-  function showError(message) {
-    loadingSp.style.display = 'none';
-    submitBtn.disabled = false;
-    errorBox.innerHTML = message;
-    errorBox.style.display = 'block';
-  }
-  document.getElementById("uploadForm").addEventListener("submit", async e => {
-      e.preventDefault();
-      const files = document.getElementById("pdfs").files;
-      if (!files.length) return alert("Please select at least one PDF.");
 
+  // PDF Library Modal (unchanged)
+  var pdfLibraryBtn = document.getElementById("pdfLibraryBtn");
+  var pdfLibraryModal = document.getElementById("pdfLibraryModal");
+  var pdfList = document.getElementById("pdfList");
+  var pdfInput = document.getElementById("pdfInput");
+  var uploadStatusSuccess = document.getElementById("uploadStatusSuccess");
+  var uploadStatusError = document.getElementById("uploadStatusError");
+  if (pdfLibraryBtn) {
+    pdfLibraryBtn.addEventListener("click", async function() {
+      pdfLibraryModal.style.display = "block";
+      const res = await fetch("/list-pdfs");
+      const files = await res.json();
+      pdfList.innerHTML = "";
+      files.forEach(file => {
+        const li = document.createElement("li");
+        li.style.marginBottom = "0.8rem";
+        li.style.padding = "0.5rem";
+        li.style.borderRadius = "6px";
+        li.style.transition = "background 0.3s";
+        li.style.display = "flex";
+        li.style.alignItems = "center";
+        li.style.gap = "0.5rem";
+        li.addEventListener("mouseover", () => { li.style.background = "#f9f9fb"; });
+        li.addEventListener("mouseout", () => { li.style.background = "transparent"; });
+        const encodedURL = encodeURIComponent(file.url).replace(/%2F/g, "/");
+        li.innerHTML = `
+          <input type="text" value="${file.name}" style="width:60%; padding:0.5rem; border:1px solid #ccc; border-radius:6px; font-family:var(--font-sans); font-size:0.95rem;" onblur="renamePdf('${file.url}', this.value)">
+          <a href="${encodedURL}" target="_blank" rel="noopener" style="width:25%; color: var(--brand-blue); text-decoration: none; font-size: 0.95rem;">View</a>
+          <button onclick="confirmDeletePdf('${file.url}', this)" style="width:15%; background:var(--brand-blue); color:#fff; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-family:var(--font-sans); font-size:0.9rem; transition:background 0.3s;">Delete</button>
+        `;
+        li.querySelector("button").addEventListener("mouseover", () => {
+          li.querySelector("button").style.background = "var(--brand-blue-hover)";
+        });
+        li.querySelector("button").addEventListener("mouseout", () => {
+          li.querySelector("button").style.background = "var(--brand-blue)";
+        });
+        pdfList.appendChild(li);
+      });
+    });
+  }
+  if (pdfInput) {
+    pdfInput.addEventListener("change", async function() {
+      const files = pdfInput.files;
+      if (!files.length) return;
       const formData = new FormData();
       for (let f of files) formData.append("pdfs", f);
-
-      const status = document.getElementById("uploadStatus");
-      status.textContent = "Uploading...";
-
+      uploadStatusSuccess.style.display = "none";
+      uploadStatusError.style.display = "none";
       const res = await fetch("/upload-pdfs", {
         method: "POST",
         body: formData
       });
-
       const msg = await res.text();
-      status.innerHTML = `✅ <strong>Upload complete:</strong><br><code>${msg}</code>`;
+      const hasWarning = msg.includes("⚠️");
+      const hasSuccess = msg.includes("✅");
+      if (hasSuccess) {
+        uploadStatusSuccess.innerHTML = `<strong>✅ Uploaded:</strong><br>${msg}`;
+        uploadStatusSuccess.style.display = "block";
+      }
+      if (hasWarning) {
+        uploadStatusError.innerHTML = `<strong>⚠️ Issues detected:</strong><br>${msg}`;
+        uploadStatusError.style.display = "block";
+      }
+      // Refresh the PDF list after upload
+      pdfLibraryBtn.click();
     });
-  </script>
+  }
+  window.closePdfLibrary = function() {
+    pdfLibraryModal.style.display = "none";
+  };
+  window.renamePdf = async function(url, newName) {
+    if (!newName.trim()) return alert("PDF name cannot be empty.");
+    try {
+      const res = await fetch("/rename-pdf", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url, newName })
+      });
+      if (!res.ok) throw new Error("Failed to rename PDF.");
+      uploadStatusSuccess.innerHTML = `<strong>✅ Renamed:</strong> ${newName}`;
+      uploadStatusSuccess.style.display = "block";
+      setTimeout(() => { uploadStatusSuccess.style.display = "none"; }, 3000);
+    } catch (err) {
+      uploadStatusError.innerHTML = `<strong>⚠️ Failed to rename:</strong> ${err.message}`;
+      uploadStatusError.style.display = "block";
+      setTimeout(() => { uploadStatusError.style.display = "none"; }, 3000);
+    }
+  };
+  window.confirmDeletePdf = function(url, btn) {
+    if (btn.textContent === "Delete") {
+      btn.textContent = "Are you sure?";
+      btn.style.background = "#d33c3c";
+      setTimeout(() => { 
+        btn.textContent = "Delete"; 
+        btn.style.background = "var(--brand-blue)"; 
+      }, 3000);
+    } else if (btn.textContent === "Are you sure?") {
+      fetch("/delete-pdf", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: url.split("/").pop() })
+      }).then(res => {
+        if (res.ok) {
+          res.json().then(data => {
+            btn.parentNode.remove();
+            uploadStatusSuccess.innerHTML = `<strong>${data.message}</strong>`;
+            uploadStatusSuccess.style.display = "block";
+            setTimeout(() => {
+            uploadStatusSuccess.style.display = "none";
+            }, 3000);
+          });
+
+          setTimeout(() => { uploadStatusSuccess.style.display = "none"; }, 3000);
+        } else {
+          uploadStatusError.innerHTML = `<strong>⚠️ Failed to delete:</strong> Error occurred`;
+          uploadStatusError.style.display = "block";
+          setTimeout(() => { uploadStatusError.style.display = "none"; }, 3000);
+        }
+      });
+    }
+  };
+
+  // Link Mappings Modal (unchanged)
+  var linkMappingsBtn = document.getElementById("linkMappingsBtn");
+  var linkMappingsModal = document.getElementById("linkMappingsModal");
+  var linkMappingsContainer = document.getElementById("linkMappingsContainer");
+  var linkMappingsCloseBtn = document.getElementById("linkMappings-close");
+  if (linkMappingsBtn) {
+    linkMappingsBtn.addEventListener("click", function() {
+      fetch('/get-url-mappings')
+      .then(res => res.json())
+      .then(data => {
+        linkMappingsContainer.innerHTML = '';
+        Object.entries(data).forEach(([key, val]) => {
+          const row = document.createElement("div");
+          row.style.marginBottom = "0.5rem";
+          row.style.display = "flex";
+          row.style.alignItems = "center";
+          row.style.gap = "0.5rem";
+          row.innerHTML = `
+            <input type="text" value="${key}" placeholder="Anchor Text" style="width:45%; padding:0.5rem; border:1px solid #ccc; border-radius:6px; font-family:var(--font-sans); font-size:0.95rem;">
+            <input type="text" value="${val}" placeholder="https://..." style="width:45%; padding:0.5rem; border:1px solid #ccc; border-radius:6px; font-family:var(--font-sans); font-size:0.95rem;">
+            <button onclick="confirmDelete(this)" style="background:var(--brand-blue); color:#fff; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-family:var(--font-sans); font-size:0.9rem; width:10%; transition:background 0.3s;">Delete</button>
+          `;
+          row.querySelector("button").addEventListener("mouseover", () => {
+            row.querySelector("button").style.background = "var(--brand-blue-hover)";
+          });
+          row.querySelector("button").addEventListener("mouseout", () => {
+            row.querySelector("button").style.background = "var(--brand-blue)";
+          });
+          linkMappingsContainer.appendChild(row);
+        });
+        linkMappingsModal.style.display = "block";
+      })
+      .catch(err => {
+        alert("❌ Failed to load mappings.");
+        console.error("Error fetching mappings:", err);
+      });
+    });
+  }
+  window.closeLinkMappings = function() {
+    linkMappingsModal.style.display = "none";
+  };
+  window.addMappingRow = function() {
+    const row = document.createElement("div");
+    row.style.marginBottom = "0.5rem";
+    row.style.display = "flex";
+    row.style.alignItems = "center";
+    row.style.gap = "0.5rem";
+    row.innerHTML = `
+      <input type="text" placeholder="Anchor Text" style="width:45%; padding:0.5rem; border:1px solid #ccc; border-radius:6px; font-family:var(--font-sans); font-size:0.95rem;">
+      <input type="text" placeholder="https://..." style="width:45%; padding:0.5rem; border:1px solid #ccc; border-radius:6px; font-family:var(--font-sans); font-size:0.95rem;">
+      <button onclick="confirmDelete(this)" style="background:var(--brand-blue); color:#fff; border:none; padding:0.5rem; border-radius:6px; cursor:pointer; font-family:var(--font-sans); font-size:0.9rem; width:10%; transition:background 0.3s;">Delete</button>
+    `;
+    row.querySelector("button").addEventListener("mouseover", () => {
+      row.querySelector("button").style.background = "var(--brand-blue-hover)";
+    });
+    row.querySelector("button").addEventListener("mouseout", () => {
+      row.querySelector("button").style.background = "var(--brand-blue)";
+    });
+    linkMappingsContainer.appendChild(row);
+  };
+  window.confirmDelete = function(btn) {
+    if (btn.textContent === "Delete") {
+      btn.textContent = "Are you sure?";
+      btn.style.background = "#d33c3c";
+      setTimeout(() => { 
+        btn.textContent = "Delete"; 
+        btn.style.background = "var(--brand-blue)"; 
+      }, 3000);
+    } else if (btn.textContent === "Are you sure?") {
+      btn.parentNode.remove();
+    }
+  };
+  window.saveLinkMappings = function() {
+    const rows = document.querySelectorAll("#linkMappingsContainer div");
+    const mappings = {};
+    rows.forEach(row => {
+      const inputs = row.querySelectorAll("input");
+      const key = inputs[0].value.trim();
+      const val = inputs[1].value.trim();
+      if (key && val) mappings[key] = val;
+    });
+    fetch("/save-url-mappings", {
+      method: "POST",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(mappings)
+    }).then(res => {
+      if (res.ok) {
+        const urlBox = document.getElementById("urlBox");
+        urlBox.value = Object.entries(mappings).map(([k, v]) => `${k}=${v}`).join("; ");
+        alert("✅ Mappings saved.");
+        closeLinkMappings();
+      } else {
+        alert("❌ Failed to save mappings.");
+      }
+    });
+  };
+
+  // ... Q&A modal, extractor modal, unchanged ...
+  // (rest of previous JS unchanged)
+
+  function escapeHTML(str) {
+    return (str||'').replace(/[<>&"']/g, function(c) {
+      return {'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;'}[c];
+    });
+  }
+  document.getElementById('editRepliesBtn').onclick = function() {
+    document.getElementById('qa-modal').style.display = 'block';
+    loadQAList();
+    document.getElementById('qa-status').textContent = '';
+  };
+  document.getElementById('qa-close').onclick = function() {
+    document.getElementById('qa-modal').style.display = 'none';
+  };
+  document.getElementById('qa-search').oninput = function() {
+    loadQAList(this.value);
+  };
+  function loadQAList(search='') {
+    fetch('/static-qa/list').then(r=>r.json()).then(res => {
+      let data = res.data || [];
+      if(search) data = data.filter(q =>
+        (q.question[0] || "").toLowerCase().includes(search.toLowerCase()) ||
+        (q.answer || "").toLowerCase().includes(search.toLowerCase())
+
+      );
+      let html = '';
+      if(data.length==0){ html='<div style="color:#888; font-style:italic;">No Q&amp;A found.</div>'; }
+      data.forEach((q,i)=>{
+        html += `<div class="qa-block">
+          <div style="margin-bottom:0.5em;">
+            <strong>Q:</strong>
+           <span contenteditable="true" spellcheck="true" data-type="message" data-idx="${i}">${escapeHTML((q.question && q.question[0]) ? q.question[0] : "")}</span>
+          </div>
+          <div>
+            <strong>A:</strong>
+            <span contenteditable="true" spellcheck="true" data-type="reply" data-idx="${i}">${escapeHTML(q.answer || "")}</span>
+          </div>
+          <div class="qa-actions">
+            <button onclick="saveQA(${i})">Save</button>
+            <button onclick="deleteQA(${i})">Delete</button>
+          </div>
+        </div>`;
+      });
+      document.getElementById('qa-list').innerHTML = html;
+    });
+  }
+  window.saveQA = function(idx) {
+    let msg = document.querySelector(`[data-type="message"][data-idx="${idx}"]`).textContent.trim();
+    let rep = document.querySelector(`[data-type="reply"][data-idx="${idx}"]`).textContent.trim();
+    fetch('/static-qa/update', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({index: idx, message: msg, reply: rep})
+    }).then(r=>r.json()).then(res=>{
+      document.getElementById('qa-status').textContent = res.status==='updated' ? 'Q&A updated!' : (res.error||'Update failed.');
+      loadQAList(document.getElementById('qa-search').value);
+    });
+  };
+  window.deleteQA = function(idx) {
+    if(!confirm('Delete this Q&A? This cannot be undone.')) return;
+    fetch('/static-qa/delete', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({index: idx})
+    }).then(r=>r.json()).then(res=>{
+      document.getElementById('qa-status').textContent = res.status==='deleted' ? 'Q&A deleted.' : (res.error||'Delete failed.');
+      loadQAList(document.getElementById('qa-search').value);
+    });
+  };
+
+  // Email Import Modal Logic
+  var extractorBtn = document.getElementById("extractorBtn");
+  var extractorModal = document.getElementById("extractorModal");
+  var extractedResults = document.getElementById("extractedResults");
+  extractorBtn.onclick = () => {
+    document.getElementById("rawThreadInput").value = "";
+    extractedResults.innerHTML = "";
+    extractedResults.style.display = "none";
+    extractorModal.style.display = "block";
+  };
+  window.closeExtractorModal = () => {
+    extractorModal.style.display = "none";
+  };
+  window.extractReplyVariants = async () => {
+    const thread = document.getElementById("rawThreadInput").value.trim();
+    if (!thread) return alert("Please paste the full email thread.");
+    const res = await fetch("/create-replies", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ thread })
+    });
+    const data = await res.json();
+    if (!data.pairs || !data.pairs.length) return alert("No replies created.");
+
+    extractedResults.innerHTML = "";
+    data.pairs.forEach((p, idx) => {
+      const block = document.createElement("div");
+      block.style.marginBottom = "1rem";
+      block.style.border = "1px solid #ccc";
+      block.style.borderRadius = "6px";
+      block.style.padding = "1rem";
+      block.innerHTML = `
+        <label>Message:</label>
+        <textarea data-index="${idx}" class="msgInput" style="width:100%;height:80px;margin-bottom:0.5rem;">${p.message}</textarea>
+        <label>Reply:</label>
+        <textarea data-index="${idx}" class="replyInput" style="width:100%;height:100px;">${p.reply}</textarea>
+        <button onclick="this.parentNode.remove()" style="margin-top:0.5rem;">🗑️ Delete</button>
+      `;
+      extractedResults.appendChild(block);
+    });
+    extractedResults.style.display = "block";
+  };
+  window.saveExtractedReplies = async () => {
+    const blocks = document.querySelectorAll("#extractedResults > div");
+    const entries = [];
+    blocks.forEach(block => {
+      const msg = block.querySelector(".msgInput").value.trim();
+      const reply = block.querySelector(".replyInput").value.trim();
+      if (msg && reply) entries.push({ message: msg, reply });
+    });
+    if (!entries.length) return alert("Nothing to save.");
+
+    const res = await fetch("/save-standard-batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ entries })
+    });
+    if (res.ok) {
+      alert("✅ Saved!");
+      closeExtractorModal();
+    } else {
+      alert("❌ Failed to save.");
+    }
+  };
+
+// === Fix Knowledge Base Modal Logic ===
+
+document.getElementById('fixKbBtn').onclick = function() {
+  document.getElementById('fixKbModal').style.display = 'block';
+};
+document.getElementById('closeFixKbModal').onclick = function() {
+  document.getElementById('fixKbModal').style.display = 'none';
+  document.getElementById('kbSearchResults').innerHTML = '';
+  document.getElementById('kbSearchInput').value = '';
+};
+document.getElementById('kbSearchBtn').onclick = async function() {
+  const query = document.getElementById('kbSearchInput').value.trim();
+  const resultsDiv = document.getElementById('kbSearchResults');
+  if (!query) return alert("Enter a search keyword or phrase.");
+
+  resultsDiv.innerHTML = '<div style="color:#003366;font-weight:bold;">Searching…</div>';
+
+  try {
+    const res = await fetch('/kb-search', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({query})
+    });
+    const data = await res.json();
+
+    if (!data.results || data.results.length === 0) {
+      resultsDiv.innerHTML = '<p>No results found.</p>';
+      return;
+    }
+// Highlight function
+const highlight = (text, query) => {
+  if (!query) return text;
+  const safe = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const re = new RegExp(safe, 'gi');
+  return text.replace(re, match => `<mark style="background: #ffec8b;">${match}</mark>`);
+};
+
+resultsDiv.innerHTML = data.results.map((r, idx) => `
+  <div style="border:1px solid #eee;padding:1em;margin-bottom:1em;">
+    <b>Source:</b> ${r.source || r.url || "Unknown"}
+    <br><b>Content:</b><br>
+    <textarea style="width:100%;min-height:70px;" id="kbEdit${idx}">${r.content}</textarea>
+    <div style="margin-top:0.5em;">
+      <button onclick="kbUpdate(${r.index},${idx})">Update</button>
+      <button onclick="kbDelete(${r.index})" style="color:red;">Delete</button>
+    </div>
+    <div style="margin-top:0.6em;color:#555;font-size:0.97em;">
+      <span>Preview:</span>
+      <div style="border:1px solid #ddd;background:#fcfcfc;padding:0.5em 0.9em;border-radius:5px;white-space:pre-line;">
+        ${highlight(r.content, query)}
+      </div>
+    </div>
+  </div>
+`).join('');
+
+  } catch (e) {
+    resultsDiv.innerHTML = '<p style="color:#a00;">Search failed. Check your connection or ask support.</p>';
+  }
+};
+
+window.kbUpdate = async function(index, idx) {
+  const newContent = document.getElementById(`kbEdit${idx}`).value.trim();
+  if (!newContent) return alert("Content can't be empty.");
+  const res = await fetch('/kb-update', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({index, content: newContent})
+  });
+  const data = await res.json();
+  if (data.status === "updated") {
+    alert("Chunk updated!");
+  } else {
+    alert("Update failed: " + (data.error || "Unknown error"));
+  }
+};
+
+window.kbDelete = async function(index) {
+  if (!confirm("Are you sure you want to delete this chunk from the knowledge base?")) return;
+  const res = await fetch('/kb-delete', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({index})
+  });
+  const data = await res.json();
+  if (data.status === "deleted") {
+    alert("Chunk deleted.");
+    document.getElementById('kbSearchBtn').onclick(); // re-search to refresh results
+  } else {
+    alert("Delete failed: " + (data.error || "Unknown error"));
+  }
+};
+
+
+// Generate Reply Button Handler
+document.getElementById("submitBtn").onclick = async function() {
+  const message = document.getElementById("parentMessage").value.trim();
+  const instruction = document.getElementById("instructionBox").value.trim();
+  const urlBox = document.getElementById("urlBox") ? document.getElementById("urlBox").value.trim() : "";
+  const ctaToggle = document.getElementById("ctaToggle") ? document.getElementById("ctaToggle").checked : true;
+  const loading = document.getElementById("loading");
+  const replyBox = document.getElementById("replyBox");
+  const sentimentBox = document.getElementById("sentimentBox");
+  const errorBox = document.getElementById("errorBox");
+  const replyLabel = document.getElementById("replyLabel");
+
+  errorBox.style.display = "none";
+  replyBox.style.display = "none";
+  replyLabel.style.display = "none";
+  sentimentBox.style.display = "none";
+
+  if (!message) {
+    errorBox.textContent = "Please enter a parent email or enquiry.";
+    errorBox.style.display = "block";
+    return;
+  }
+  loading.style.display = "inline-block";
+  try {
+    const res = await fetch("/reply", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        instruction,
+        url_box: urlBox,
+        include_cta: ctaToggle
+      })
+    });
+    const data = await res.json();
+    if (data.error) {
+      errorBox.textContent = data.error;
+      errorBox.style.display = "block";
+    } else {
+      replyBox.innerHTML = data.reply;
+      // Show sentiment + strategy advice
+      if (typeof data.sentiment_score !== "undefined" && data.sentiment_score !== null) {
+        let sentimentText = `Sentiment Score: ${data.sentiment_score}`;
+        if (data.strategy_explanation) {
+          sentimentText += ` – <strong>Strategy:</strong> ${data.strategy_explanation}`;
+        }
+        sentimentBox.innerHTML = sentimentText;
+        sentimentBox.style.display = "block";
+      }
+
+      replyBox.style.display = "block";
+      replyLabel.style.display = "block";
+      lastMessage = message;
+      lastReply = data.reply;
+      replyBox.querySelectorAll("a").forEach(link => {
+        link.setAttribute("contenteditable", "false");
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "noopener");
+});
+
+      if (typeof data.sentiment_score !== "undefined" && data.sentiment_score !== null) {
+        sentimentBox.textContent = "Sentiment Score: " + data.sentiment_score + (data.strategy_explanation ? " – " + data.strategy_explanation : "");
+        sentimentBox.style.display = "block";
+      }
+      // Show revise section ONLY if reply generated
+      showReviseSection();
+    }
+  } catch (e) {
+    errorBox.textContent = "Failed to generate reply.";
+    errorBox.style.display = "block";
+  }
+  loading.style.display = "none";
+};
+
+
+// Clear Text Button Handler
+document.getElementById("clearBtn").onclick = function() {
+  document.getElementById("parentMessage").value = "";
+  document.getElementById("instructionBox").value = "";
+  if (document.getElementById("urlBox")) document.getElementById("urlBox").value = "";
+  if (document.getElementById("reviseBox")) document.getElementById("reviseBox").value = "";
+  document.getElementById("replyBox").innerHTML = "";
+  document.getElementById("replyBox").style.display = "none";
+  document.getElementById("sentimentBox").style.display = "none";
+  document.getElementById("errorBox").style.display = "none";
+  document.getElementById("replyLabel").style.display = "none";
+  // Hide the revise section on clear
+  const reviseSection = document.getElementById("reviseSection");
+  if (reviseSection) reviseSection.style.display = "none";
+};
+
+
+// =======================
+// === REVISION LOGIC ====
+// =======================
+
+// Make revise section appear only after a reply is generated
+const reviseSection = document.getElementById("reviseSection");
+const reviseBtn = document.getElementById("reviseBtn");
+const reviseBox = document.getElementById("reviseBox");
+const urlBox = document.getElementById("urlBox");
+const ctaToggle = document.getElementById("ctaToggle");
+const replyBox = document.getElementById("replyBox");
+const sentimentBox = document.getElementById("sentimentBox");
+
+// Show revise section after generating a reply
+function showReviseSection() {
+  if (reviseSection) reviseSection.style.display = "block";
+}
+function hideReviseSection() {
+  if (reviseSection) reviseSection.style.display = "none";
+  if (reviseBox) reviseBox.value = "";
+}
+// At the top of your script (if not already present), add:
+let lastMessage = "";
+let lastReply = "";
+
+// Now use this for your reviseBtn handler:
+if (reviseBtn) {
+  reviseBtn.onclick = async function() {
+    const instruction = reviseBox.value.trim();
+    const urlText = urlBox ? urlBox.value.trim() : "";
+    const includeCTA = ctaToggle ? ctaToggle.checked : true;
+    const errorBox = document.getElementById("errorBox");
+
+    // IDIOT-PROOF: Don't try to revise unless we have a generated reply!
+    if (!lastMessage || !lastReply) {
+      alert("Generate a reply before revising.");
+      return;
+    }
+
+    errorBox.style.display = "none";
+    reviseBtn.disabled = true;
+    reviseBtn.textContent = "Revising...";
+    try {
+      const res = await fetch("/revise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          message: lastMessage,      // pull from variable, not the DOM!
+          previous_reply: lastReply, // pull from variable, not the DOM!
+          instruction,
+          url_box: urlText,
+          include_cta: includeCTA
+        })
+      });
+
+      const data = await res.json();
+      if (data.error) {
+  errorBox.textContent = data.error;
+  errorBox.style.display = "block";
+} else {
+  replyBox.innerHTML = data.reply || "";
+  replyBox.style.display = "block";
+  // Make hyperlinks clickable and open in a new tab after revision
+  replyBox.querySelectorAll("a").forEach(link => {
+    link.setAttribute("contenteditable", "false");
+    link.setAttribute("target", "_blank");
+    link.setAttribute("rel", "noopener");
+  });
+  lastReply = data.reply; // <-- CRUCIAL: update for future revisions!
+  if (typeof data.sentiment_score !== "undefined" && data.sentiment_score !== null) {
+    sentimentBox.textContent = "Sentiment Score: " + data.sentiment_score + (data.strategy_explanation ? " – " + data.strategy_explanation : "");
+    sentimentBox.style.display = "block";
+  }
+}
+
+    } catch (e) {
+      errorBox.textContent = "Failed to revise reply.";
+      errorBox.style.display = "block";
+    }
+    reviseBtn.disabled = false;
+    reviseBtn.textContent = "Revise Response";
+    reviseBox.value = "";
+  };
+}
+// ---- SAVE AS STANDARD BUTTON LOGIC ----
+const saveBtn = document.getElementById("saveBtn");
+const saveStatus = document.getElementById("saveStatus");
+
+if (saveBtn) {
+  saveBtn.onclick = async function() {
+    // Get the latest parent message and reply content
+    const message = document.getElementById("parentMessage").value.trim();
+    let reply = replyBox.innerText.trim();
+
+    if (!message || !reply) {
+      alert("Please generate a reply first. (No message or reply to save.)");
+      saveStatus.textContent = "Please generate a reply first.";
+      saveStatus.style.color = "#d33c3c";
+      return;
+    }
+
+
+    saveBtn.disabled = true;
+    saveStatus.textContent = "Saving...";
+
+    try {
+      const res = await fetch("/save-standard", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, reply })
+      });
+      const data = await res.json();
+      if (res.ok && data.status === "saved") {
+        saveStatus.textContent = "Saved!";
+        saveStatus.style.color = "#47B881";
+      } else {
+        saveStatus.textContent = "Failed to save.";
+        saveStatus.style.color = "#d33c3c";
+      }
+    } catch (e) {
+      saveStatus.textContent = "Failed to save.";
+      saveStatus.style.color = "#d33c3c";
+    }
+
+    setTimeout(() => { saveStatus.textContent = ""; }, 2500);
+    saveBtn.disabled = false;
+  };
+}
+
+// Always hide the revise section on clear (defensive)
+if (replyBox && replyBox.innerText.trim()) showReviseSection();
+
+});
+
+// === SMART LINK ON SELECTION LOGIC ===
+document.getElementById("addLinkBtn").onclick = function() {
+  const replyBox = document.getElementById("replyBox");
+  replyBox.focus();
+  const sel = window.getSelection();
+  if (!sel.rangeCount || !sel.anchorNode) {
+    alert("Please highlight the word or phrase to link in the reply.");
+    return;
+  }
+  // Ensure selection is inside replyBox
+  let node = sel.anchorNode;
+  let found = false;
+  while (node) {
+    if (node === replyBox) { found = true; break; }
+    node = node.parentNode;
+  }
+  if (!found) {
+    alert("Highlight text inside the reply area.");
+    return;
+  }
+  const range = sel.getRangeAt(0);
+  if (range.collapsed) {
+    alert("Please highlight the word or phrase to link.");
+    return;
+  }
+
+  let url = prompt("Enter the URL for this link:", "https://");
+  if (!url || !/^https?:\/\//i.test(url)) {
+    alert("Enter a valid URL (must start with http or https).");
+    return;
+  }
+
+  // Remove any existing <a> tags inside the selection (prevents nesting issues)
+  let selectedContents = range.extractContents();
+  selectedContents.querySelectorAll && selectedContents.querySelectorAll("a").forEach(a => {
+    const parent = a.parentNode;
+    while (a.firstChild) parent.insertBefore(a.firstChild, a);
+    parent.removeChild(a);
+  });
+
+  // Create link
+  const a = document.createElement("a");
+  a.href = url;
+  a.target = "_blank";
+  a.rel = "noopener";
+  a.textContent = selectedContents.textContent;
+  range.insertNode(a);
+
+  // Restore selection after insertion (optional UX)
+  sel.removeAllRanges();
+  const newRange = document.createRange();
+  newRange.selectNode(a);
+  sel.addRange(newRange);
+};
+
+// Make links in replyBox always open in new tab, even when contenteditable
+document.getElementById("replyBox").addEventListener("click", function(e) {
+  const target = e.target;
+  // Only intercept if it's an <a>
+  if (target.tagName === "A") {
+    // If user is selecting text, don't intercept
+    const selection = window.getSelection();
+    if (selection && selection.type === "Range") return;
+    e.preventDefault();
+    window.open(target.href, '_blank', 'noopener');
+  }
+});
+
+// --- HELP & FAQ MODAL LOGIC ---
+var helpFaqBtn = document.getElementById("helpFaqBtn");
+var helpFaqModal = document.getElementById("helpFaqModal");
+var closeHelpFaq = document.getElementById("closeHelpFaq");
+if (helpFaqBtn && helpFaqModal && closeHelpFaq) {
+  helpFaqBtn.onclick = function() {
+    helpFaqModal.style.display = "flex";
+    document.body.style.overflow = "hidden";
+  };
+  closeHelpFaq.onclick = function() {
+    helpFaqModal.style.display = "none";
+    document.body.style.overflow = "";
+  };
+  helpFaqModal.onclick = function(e) {
+    if (e.target === helpFaqModal) {
+      helpFaqModal.style.display = "none";
+      document.body.style.overflow = "";
+    }
+  };
+}
+
+// --- HELP & FAQ MODAL LOGIC ---
+// (all of the code above here)
+
+
+// --- FAQ Modal Search Logic ---
+var helpFaqSearch = document.getElementById("helpFaqSearch");
+if (helpFaqSearch) {
+  helpFaqSearch.onkeyup = function() {
+    var query = this.value.toLowerCase().trim();
+    var faqSections = document.querySelectorAll("#helpFaqModal .faq-section");
+    faqSections.forEach(function(section) {
+      var text = section.textContent.toLowerCase();
+      section.style.display = (!query || text.indexOf(query) !== -1) ? "" : "none";
+    });
+  };
+}
+
+// --- PROGRESS BAR: "N of N UPLOADING" VERSION ---
+document.getElementById('pdfInput').addEventListener('change', async function() {
+  const files = this.files;
+  const progressBar = document.getElementById('pdfProgressBar');
+  const progressInner = document.getElementById('pdfProgressInner');
+  if (!files.length) return;
+
+  progressBar.style.display = "block";
+  progressInner.style.width = "100%";
+
+  for (let i = 0; i < files.length; i++) {
+    // Set immediately, BEFORE upload starts
+    progressInner.textContent = `${i + 1} of ${files.length} UPLOADING`;
+    const formData = new FormData();
+    formData.append("pdfs", files[i]);
+    await fetch('/upload-pdfs', {
+      method: "POST",
+      body: formData
+    });
+  }
+
+  // After all uploads finish, show "UPLOAD COMPLETE" for a moment
+  progressInner.textContent = "UPLOAD COMPLETE";
+  setTimeout(() => {
+    progressBar.style.display = "none";
+    progressInner.textContent = "";
+  }, 1200);
+});
+
+</script>
+
 </body>
 </html>
